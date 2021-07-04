@@ -1,0 +1,2097 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Netcore认证授权与IdentityServer4（2）JWT, Bosch SEU chaoqiang Mechanics Eletronics 超强 micro-service Intelligent-Manufacturing MES">
+    <meta name="description" content="主要概要这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：
+
+鉴权授权流程变化
+源码解读鉴权
+源码解读多授权策略
+JWT和Identity
+
+">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Netcore认证授权与IdentityServer4（2）JWT | chaoqiang&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">chaoqiang's Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/AV" class="waves-effect waves-light">
+
+      
+      <i class="fas fa-list" style="zoom: 0.6;"></i>
+      
+      <span>Medias</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/Music">
+          
+          <i class="fas fa-music" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Musics</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Movie">
+          
+          <i class="fas fa-film" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Movies</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Book">
+          
+          <i class="fas fa-book" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Books</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/AV">
+          
+          <i class="fas fa-image" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Galleries</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">chaoqiang's Blog</div>
+        <div class="logo-desc">
+            
+            博世互联工业 | 智能制造 | 微服务架构 | 东南大学 | 机械电子工程
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa-fw fas fa-list"></i>
+			
+			Medias
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>   
+				
+                  <a href="/Music " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-music" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Musics</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Movie " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-film" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Movies</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Book " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-book" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Books</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/AV " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-image" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Galleries</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/Zhengchaoqiang" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/Zhengchaoqiang" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+<script src="/libs/cryptojs/crypto-js.min.js"></script>
+<script>
+    (function() {
+        let pwd = '';
+        if (pwd && pwd.length > 0) {
+            if (pwd !== CryptoJS.SHA256(prompt('请输入访问本文章的密码')).toString(CryptoJS.enc.Hex)) {
+                alert('密码错误，将返回主页！');
+                location.href = '/';
+            }
+        }
+    })();
+</script>
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">Netcore认证授权与IdentityServer4（2）JWT</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/Net-Core/">
+                                <span class="chip bg-color">Net Core</span>
+                            </a>
+                        
+                            <a href="/tags/JWT/">
+                                <span class="chip bg-color">JWT</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                .Net Core Learning Series
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-05-29
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2020-06-14
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    3.6k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    15 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="主要概要"><a href="#主要概要" class="headerlink" title="主要概要"></a>主要概要</h2><p>这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：</p>
+<ol>
+<li>鉴权授权流程变化</li>
+<li>源码解读鉴权</li>
+<li>源码解读多授权策略</li>
+<li>JWT和Identity</li>
+</ol>
+<h2 id="Cookie-Session"><a href="#Cookie-Session" class="headerlink" title="Cookie/Session"></a>Cookie/Session</h2><p><strong>基本流程</strong>：其实是为了解决无状态下的用户识别问题<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/sessioncookie.png" alt=""></p>
+<h2 id="Token校验"><a href="#Token校验" class="headerlink" title="Token校验"></a>Token校验</h2><p><strong>鉴权授权：</strong> 鉴权中心—根据账号密码颁发token</p>
+<ul>
+<li>带着Token就可以访问API，API认可token，不需要去鉴权中心校验</li>
+<li>第三方API也认可Token</li>
+<li>SSO： Single Sign On</li>
+<li>防止抵赖-防止篡改-信息传递<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/Token.png" alt="Token"></li>
+</ul>
+<p><strong>细想一下，这个过程会不会有什么问题？</strong> 细思极恐！！！</p>
+<ul>
+<li>用户拿到token之后去访问应用，这个token可靠性如何保证，验证token的过程没有返回Authorization Center进行校验？</li>
+<li>说到底，这是离线式的，这里面有个<strong>信任</strong>问题！</li>
+</ul>
+<p><strong>如何解决信任问题？</strong></p>
+<ul>
+<li>Token是不是真的？是不是Authorization Center颁发的？是不是有效的？</li>
+</ul>
+<p><strong>通过加密算法来建立信任：</strong> 通过密钥来加密解密token来实现</p>
+<ul>
+<li><p><strong>对称可逆加密</strong>—— 同一个秘钥用来加密解密—必须有秘钥才能加密，必须有秘钥才能解密—-如果token能解密，就能建立信任关系—再通过其他信息校验是否有效–</p>
+</li>
+<li><p><strong>非对称可逆加密</strong>—— 一组秘钥对(私钥加密+公钥解密)—由私钥加密的内容，提供公钥别人获取来解密—只要能解密，就能证明<strong>来源</strong>—建立了信任关系—再通过其他信息校验是否有效—</p>
+</li>
+<li><p>对称速度快—秘钥不安全—–内部用</p>
+</li>
+<li><p>非对称速度慢—秘钥安全—-第三方</p>
+</li>
+</ul>
+<p><strong>常用的两种方式：</strong></p>
+<ol>
+<li><p>HS256<br>HS256 (带有 SHA-256 的 HMAC 是一种对称算法, 双方之间仅共享一个 密钥。由于使用相同的密钥生成签名和验证签名, 因此必须注意确保密钥不被泄密。</p>
+</li>
+<li><p>RS256<br>RS256 (采用SHA-256 的 RSA 签名) 是一种非对称算法, 它使用公共/私钥对: 标识提供方采用私钥生成签名, JWT 的使用方获取公钥以验证签名。由于公钥 (与私钥相比) 不需要保护, 因此大多数标识提供方使其易于使用方获取和使用 (通常通过一个元数据URL)。</p>
+</li>
+</ol>
+<h2 id="JWT-Json-Web-Token"><a href="#JWT-Json-Web-Token" class="headerlink" title="JWT-Json Web Token"></a>JWT-Json Web Token</h2><p>官网：<a href="https://jwt.io/" target="_blank" rel="noopener">https://jwt.io/</a></p>
+<p>1 <strong>授权</strong>：这是使用JWT的最常见方案。一旦用户登录，每个后续请求将包括JWT，允许用户访问该令牌允许的路由，服务和资源。Single Sign On是一种现在广泛使用JWT的功能，因为它的开销很小，并且能够在不同的域中轻松使用。</p>
+<p>2 <strong>信息交换</strong>：JSON Web令牌是在各方之间安全传输信息的好方法。因为JWT可以签名 - 例如，使用公钥/私钥对 - 您可以确定发件人是他们所说的人。此外，由于使用标头和有效负载计算签名，您还可以验证内容是否未被篡改。</p>
+<h3 id="JWT令牌结构"><a href="#JWT令牌结构" class="headerlink" title="JWT令牌结构"></a>JWT令牌结构</h3><ul>
+<li><p>Header　头<br>{ “alg”: “HS256”, “typ”: “JWT”}</p>
+</li>
+<li><p>Payload　有效载荷—不是加密，只是序列化，JWT 默认是不加密的，任何人都可以读到</p>
+</li>
+<li><p>Signature　签名–防止抵赖-防止篡改<br>=HMACSHA256( base64UrlEncode(header) + “.” + base64UrlEncode(payload), secret)</p>
+</li>
+</ul>
+<p>JWT形式就是这样 xxxxx.yyyyy.zzzzz，其实就是两个目的：</p>
+<ol>
+<li>加密-解密，只要能解密，就能证明来源</li>
+<li>解密后比对内容，看是否篡改</li>
+</ol>
+<p>举对称加密的HS256这个例子，通过下图可以看到，token颁发者将header和payload.data组合进行MDK5加密成一字符串，然后通过密钥加密生成签名；对于接收者，首先将签名用密钥解密，如果能解开，那就解决了信任问题，其次，解开后再验证payload.data中的验证数据是否有效，看看有没有被篡改。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/JWT.JPG" alt=""></p>
+<h2 id="JWT实践"><a href="#JWT实践" class="headerlink" title="JWT实践"></a>JWT实践</h2><h3 id="鉴权中心颁发Token"><a href="#鉴权中心颁发Token" class="headerlink" title="鉴权中心颁发Token"></a>鉴权中心颁发Token</h3><p>颁发Token 的过程就是根据用户输入的用户名密码生成Token,主要的过程依靠下面的<code>JWTHSService</code>这个服务：</p>
+<p>登陆的API：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span><span class="token function">Route</span><span class="token punctuation">(</span><span class="token string">"Login"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token punctuation">[</span>HttpPost<span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">string</span> <span class="token function">Login</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">,</span> <span class="token keyword">string</span> password<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token string">"Chaoqiang"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token string">"123456"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>password<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//应该数据库</span>
+  <span class="token punctuation">{</span>
+    CurrentUserModel currentUser <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CurrentUserModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      Id <span class="token operator">=</span> <span class="token number">123</span><span class="token punctuation">,</span>
+      Account <span class="token operator">=</span> <span class="token string">"zhengchaoqiang,com"</span><span class="token punctuation">,</span>
+      EMail<span class="token operator">=</span><span class="token string">"12345678@qq.com"</span><span class="token punctuation">,</span>
+      Mobile<span class="token operator">=</span><span class="token string">"1234567890"</span><span class="token punctuation">,</span>
+      Sex <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+      Age <span class="token operator">=</span> <span class="token number">28</span><span class="token punctuation">,</span>
+      Name <span class="token operator">=</span> <span class="token string">"Chaoqiang"</span><span class="token punctuation">,</span>
+      Role <span class="token operator">=</span> <span class="token string">"Admin"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">string</span> token <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_iJWTService<span class="token punctuation">.</span><span class="token function">GetToken</span><span class="token punctuation">(</span>currentUser<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> JsonConvert<span class="token punctuation">.</span><span class="token function">SerializeObject</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      token
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> JsonConvert<span class="token punctuation">.</span><span class="token function">SerializeObject</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+  <span class="token punctuation">{</span>
+  result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+  token <span class="token operator">=</span> <span class="token string">""</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>生成Token的服务：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JWTHSService</span> <span class="token punctuation">:</span> IJWTService
+<span class="token punctuation">{</span>
+  <span class="token preprocessor property">#<span class="token directive keyword">region</span> Option注入</span>
+  <span class="token keyword">private</span> <span class="token keyword">readonly</span> JWTTokenOptions _JWTTokenOptions<span class="token punctuation">;</span>
+  <span class="token keyword">public</span> <span class="token function">JWTHSService</span><span class="token punctuation">(</span>IOptionsMonitor<span class="token operator">&lt;</span>JWTTokenOptions<span class="token operator">></span> jwtTokenOptions<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions <span class="token operator">=</span> jwtTokenOptions<span class="token punctuation">.</span>CurrentValue<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span>
+
+  <span class="token keyword">public</span> <span class="token keyword">string</span> <span class="token function">GetToken</span><span class="token punctuation">(</span>CurrentUserModel userModel<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> claims <span class="token operator">=</span> <span class="token keyword">new</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Name<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"EMail"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>EMail<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Account"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Account<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Age"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Age<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Id"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Id<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Mobile"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Mobile<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">,</span>userModel<span class="token punctuation">.</span>Role<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token comment" spellcheck="true">//new Claim("Role", userModel.Role),//这个不能角色授权</span>
+      <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Sex"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Sex<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//各种信息拼装</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> key <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SymmetricSecurityKey</span><span class="token punctuation">(</span>Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetBytes</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>SecurityKey<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> creds <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SigningCredentials</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> SecurityAlgorithms<span class="token punctuation">.</span>HmacSha256<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> token <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">JwtSecurityToken</span><span class="token punctuation">(</span>
+        issuer<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Issuer<span class="token punctuation">,</span>
+        audience<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Audience<span class="token punctuation">,</span>
+        claims<span class="token punctuation">:</span> claims<span class="token punctuation">,</span>
+        expires<span class="token punctuation">:</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">60</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//5分钟有效期</span>
+        notBefore<span class="token punctuation">:</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//1分钟后有效</span>
+        signingCredentials<span class="token punctuation">:</span> creds<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">string</span> returnToken <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">JwtSecurityTokenHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">WriteToken</span><span class="token punctuation">(</span>token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> returnToken<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>值得注意的是：<br>Claims (Payload)  Claims 部分包含了一些跟这个 token 有关的重要信息。 JWT 标准规定了一些字段，下面节选一些字段:</p>
+<ul>
+<li>iss: The issuer of the token，token 是给谁的，颁发者身份标识，表示 Token 颁发者的唯一标识，一般是一个 http(s) url，如 <a href="https://www.baidu.com。" target="_blank" rel="noopener">https://www.baidu.com。</a></li>
+<li>sub: The subject of the token，token 主题</li>
+<li>exp: Expiration Time。 token 过期时间，Unix 时间戳格式</li>
+<li>iat: Issued At。 token 创建时间， Unix 时间戳格式</li>
+<li>jti: JWT ID。针对当前 token 的唯一标识</li>
+<li>除了规定的字段外，可以包含其他任何 JSON 兼容的字段。</li>
+</ul>
+<h3 id="API中如何鉴权"><a href="#API中如何鉴权" class="headerlink" title="API中如何鉴权"></a>API中如何鉴权</h3><ol>
+<li>首先，管道中使用<code>app.UseAuthentication();</code>，鉴权：解析信息–就是读取token，解密token；</li>
+<li>然后，在serviceConfigure中要指定如何来鉴权：</li>
+</ol>
+<p>指定Scheme,这里的Scheme其实就是<code>Bearer</code>。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>JwtBearerDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Scheme</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>怎么理解这个Bearer呢？我们可以通过Postman直观地来看一下：<br>在请求的Header中有一个Authorization，然后有一种类型叫Bearer Token，其实就是Bearer+空格+Token这种形式。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/Bearer.png" alt=""><br>其实这也就等价于下面这样的操作，鉴权时直接在Header中对Authorization截取Bearer。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/Bearer2.png" alt=""></p>
+<p>指定完Scheme之后，还需要指定校验的规则和细节：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>JwtBearerDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Scheme</span>
+<span class="token punctuation">.</span><span class="token function">AddJwtBearer</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>TokenValidationParameters <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TokenValidationParameters</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//JWT有一些默认的属性，就是给鉴权时就可以筛选了</span>
+    ValidateIssuer <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Issuer</span>
+    ValidateAudience <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Audience</span>
+    ValidateLifetime <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证失效时间</span>
+    ValidateIssuerSigningKey <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证SecurityKey</span>
+    ValidAudience <span class="token operator">=</span> tokenOptions<span class="token punctuation">.</span>Audience<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//</span>
+    ValidIssuer <span class="token operator">=</span> tokenOptions<span class="token punctuation">.</span>Issuer<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//Issuer，这两项和前面签发jwt的设置一致</span>
+    IssuerSigningKey <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SymmetricSecurityKey</span><span class="token punctuation">(</span>Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetBytes</span><span class="token punctuation">(</span>tokenOptions<span class="token punctuation">.</span>SecurityKey<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//拿到SecurityKey</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ol start="3">
+<li>接着，需要在被访问的API上加上[Authorize]标签，框架自动完成鉴权操作。</li>
+</ol>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JWTController</span> <span class="token punctuation">:</span> Controller
+<span class="token punctuation">{</span>
+  <span class="token punctuation">[</span>Authorize<span class="token punctuation">]</span>
+  <span class="token keyword">public</span> IActionResult <span class="token function">Index</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token keyword">var</span> item <span class="token keyword">in</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User<span class="token punctuation">.</span>Identities<span class="token punctuation">.</span><span class="token function">First</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Claims<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>$<span class="token string">"{item.Type}:{item.Value}"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ol start="4">
+<li>请求Token，带上token访问API</li>
+</ol>
+<p>不带Token直接访问API，返回401未授权错误码：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/witoutToken.png" alt=""><br>先去鉴权中心获取Token：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/RequestToken.png" alt=""><br>然后将Token手动放到请求Header的Authorization中，带着Token进行请求<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/withToken.png" alt=""></p>
+<p><strong>非对称加密</strong><br>用非对称加密，先看鉴权中心这边的变化：<br>首先生成私钥和公钥,序列化到两个json文件中去：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> RSAParameters <span class="token function">GenerateAndSaveKey</span><span class="token punctuation">(</span><span class="token keyword">string</span> filePath<span class="token punctuation">,</span> <span class="token keyword">bool</span> withPrivate <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  RSAParameters publicKeys<span class="token punctuation">,</span> privateKeys<span class="token punctuation">;</span>
+  <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token keyword">var</span> rsa <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RSACryptoServiceProvider</span><span class="token punctuation">(</span><span class="token number">2048</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//即时生成</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">try</span>
+    <span class="token punctuation">{</span>
+      privateKeys <span class="token operator">=</span> rsa<span class="token punctuation">.</span><span class="token function">ExportParameters</span><span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      publicKeys <span class="token operator">=</span> rsa<span class="token punctuation">.</span><span class="token function">ExportParameters</span><span class="token punctuation">(</span><span class="token keyword">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">finally</span>
+    <span class="token punctuation">{</span>
+      rsa<span class="token punctuation">.</span>PersistKeyInCsp <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  File<span class="token punctuation">.</span><span class="token function">WriteAllText</span><span class="token punctuation">(</span>Path<span class="token punctuation">.</span><span class="token function">Combine</span><span class="token punctuation">(</span>filePath<span class="token punctuation">,</span> <span class="token string">"key.json"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> JsonConvert<span class="token punctuation">.</span><span class="token function">SerializeObject</span><span class="token punctuation">(</span>privateKeys<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  File<span class="token punctuation">.</span><span class="token function">WriteAllText</span><span class="token punctuation">(</span>Path<span class="token punctuation">.</span><span class="token function">Combine</span><span class="token punctuation">(</span>filePath<span class="token punctuation">,</span> <span class="token string">"key.public.json"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> JsonConvert<span class="token punctuation">.</span><span class="token function">SerializeObject</span><span class="token punctuation">(</span>publicKeys<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> withPrivate <span class="token operator">?</span> privateKeys <span class="token punctuation">:</span> publicKeys<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>其中，生成一个秘钥组key.json和key.public.json，生成token就有一点不一样：<br>主要就是加密算法不一样： <code>var credentials = new SigningCredentials(new RsaSecurityKey(keyParams), SecurityAlgorithms.RsaSha256Signature);</code>, 生成token如下：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">string</span> <span class="token function">GetToken</span><span class="token punctuation">(</span>CurrentUserModel userModel<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">//string jtiCustom = Guid.NewGuid().ToString();//用来标识 Token</span>
+  <span class="token keyword">var</span> claims <span class="token operator">=</span> <span class="token keyword">new</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Name<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"EMail"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>EMail<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Account"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Account<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Age"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Age<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Id"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Id<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Mobile"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Mobile<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">,</span>userModel<span class="token punctuation">.</span>Role<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token comment" spellcheck="true">//new Claim("Role", userModel.Role),//这个不能角色授权</span>
+    <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"Sex"</span><span class="token punctuation">,</span> userModel<span class="token punctuation">.</span>Sex<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//各种信息拼装</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">string</span> keyDir <span class="token operator">=</span> Directory<span class="token punctuation">.</span><span class="token function">GetCurrentDirectory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>RSAHelper<span class="token punctuation">.</span><span class="token function">TryGetKeyParameters</span><span class="token punctuation">(</span>keyDir<span class="token punctuation">,</span> <span class="token keyword">true</span><span class="token punctuation">,</span> <span class="token keyword">out</span> RSAParameters keyParams<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token keyword">false</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    keyParams <span class="token operator">=</span> RSAHelper<span class="token punctuation">.</span><span class="token function">GenerateAndSaveKey</span><span class="token punctuation">(</span>keyDir<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">var</span> credentials <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SigningCredentials</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RsaSecurityKey</span><span class="token punctuation">(</span>keyParams<span class="token punctuation">)</span><span class="token punctuation">,</span> SecurityAlgorithms<span class="token punctuation">.</span>RsaSha256Signature<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">var</span> token <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">JwtSecurityToken</span><span class="token punctuation">(</span>
+      issuer<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Issuer<span class="token punctuation">,</span>
+      audience<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Audience<span class="token punctuation">,</span>
+      claims<span class="token punctuation">:</span> claims<span class="token punctuation">,</span>
+      expires<span class="token punctuation">:</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">60</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//5分钟有效期</span>
+      signingCredentials<span class="token punctuation">:</span> credentials<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> handler <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">JwtSecurityTokenHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">string</span> tokenString <span class="token operator">=</span> handler<span class="token punctuation">.</span><span class="token function">WriteToken</span><span class="token punctuation">(</span>token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> tokenString<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>用非对称加密，在API端的变化，主要IssuerSigningKey 不一样了，它是通过读取公钥<code>key.public.json</code>来解密，然后校验：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 读取公钥</span>
+<span class="token keyword">string</span> path <span class="token operator">=</span> Path<span class="token punctuation">.</span><span class="token function">Combine</span><span class="token punctuation">(</span>Directory<span class="token punctuation">.</span><span class="token function">GetCurrentDirectory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"key.public.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">string</span> key <span class="token operator">=</span> File<span class="token punctuation">.</span><span class="token function">ReadAllText</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//this.Configuration["SecurityKey"];</span>
+Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>$<span class="token string">"KeyPath:{path}"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> keyParams <span class="token operator">=</span> JsonConvert<span class="token punctuation">.</span><span class="token generic-method function">DeserializeObject<span class="token punctuation">&lt;</span>RSAParameters<span class="token punctuation">></span></span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> credentials <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SigningCredentials</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RsaSecurityKey</span><span class="token punctuation">(</span>keyParams<span class="token punctuation">)</span><span class="token punctuation">,</span> SecurityAlgorithms<span class="token punctuation">.</span>RsaSha256Signature<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span>
+
+services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>JwtBearerDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">AddJwtBearer</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>TokenValidationParameters <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TokenValidationParameters</span>
+  <span class="token punctuation">{</span>
+    ValidateIssuer <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Issuer</span>
+    ValidateAudience <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Audience</span>
+    ValidateLifetime <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证失效时间</span>
+    ValidateIssuerSigningKey <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证SecurityKey</span>
+    ValidAudience <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>Configuration<span class="token punctuation">[</span><span class="token string">"JWTTokenOptions：Audience"</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//Audience</span>
+    ValidIssuer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>Configuration<span class="token punctuation">[</span><span class="token string">"JWTTokenOptions：Issuer"</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//Issuer，这两项和前面签发jwt的设置一致</span>
+    IssuerSigningKey <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RsaSecurityKey</span><span class="token punctuation">(</span>keyParams<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><strong>对JWT对鉴权中心而言，主要的步骤：</strong></p>
+<ul>
+<li>Core WebApi当做鉴权服务器</li>
+<li>配置基础信息(对称+不对称)</li>
+<li>接受请求，完成验证，创建token</li>
+</ul>
+<p><strong>对JWT的客户端而言，主要的步骤：</strong></p>
+<ul>
+<li>客户端 Configure+ConfigureService</li>
+<li>配置基础信息(对称+不对称)</li>
+<li>配置请求接受鉴权授权</li>
+</ul>
+<p><strong>对称加密校验流程：</strong></p>
+<ul>
+<li>直接访问无权限要求地址—200</li>
+<li>访问有权限要求地址—401</li>
+<li>登录后获取token</li>
+<li>拿着token登录需要权限认证地址—200</li>
+<li>Authorization: bearer token</li>
+</ul>
+<p><strong>非对称可逆加密校验流程：</strong></p>
+<ul>
+<li>接访问无权限要求地址—200</li>
+<li>访问有权限要求地址—401</li>
+<li>登录后获取token</li>
+<li>配置最新的public key</li>
+<li>拿着token登录需要权限认证地址—200</li>
+<li>Authorization: bearer token</li>
+</ul>
+<h2 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h2><h3 id="基于角色的授权策略"><a href="#基于角色的授权策略" class="headerlink" title="基于角色的授权策略"></a>基于角色的授权策略</h3><ol>
+<li>在鉴权授权中心，生成token时，加上角色的Claims就可以了：<br><code>new Claim(ClaimTypes.Role,userModel.Role),</code></li>
+<li>然后在客户端API上，加上基于Role的Authorize即可：<br><code>[Authorize(Roles = "Admin")]</code></li>
+</ol>
+<h3 id="基于Policy（策略）的授权策略"><a href="#基于Policy（策略）的授权策略" class="headerlink" title="基于Policy（策略）的授权策略"></a>基于Policy（策略）的授权策略</h3><p>基于现有的规则进行叠加，在API的startup service中中增加Authorization的检验：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthorization</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"AdminPolicy"</span><span class="token punctuation">,</span>
+    policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder
+    <span class="token punctuation">.</span><span class="token function">RequireRole</span><span class="token punctuation">(</span><span class="token string">"Admin"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Claim的Role是Admin</span>
+    <span class="token punctuation">.</span><span class="token function">RequireUserName</span><span class="token punctuation">(</span><span class="token string">"Chaoqiang"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Claim的Name是Eleven</span>
+    <span class="token punctuation">.</span><span class="token function">RequireClaim</span><span class="token punctuation">(</span><span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//必须有某个Cliam</span>
+    <span class="token punctuation">.</span><span class="token function">RequireClaim</span><span class="token punctuation">(</span><span class="token string">"Account"</span><span class="token punctuation">)</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//内置</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在API上增加授权的验证：<br><code>[Authorize(Policy = "AdminPolicy")]</code></p>
+<p>下面进行一些升级，自定义策略：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"> services<span class="token punctuation">.</span><span class="token function">AddAuthorization</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"AdminPolicy"</span><span class="token punctuation">,</span>
+  policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder
+    <span class="token punctuation">.</span><span class="token function">RequireRole</span><span class="token punctuation">(</span><span class="token string">"Admin"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Claim的Role是Admin</span>
+    <span class="token punctuation">.</span><span class="token function">RequireUserName</span><span class="token punctuation">(</span><span class="token string">"Eleven"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Claim的Name是Eleven</span>
+    <span class="token punctuation">.</span><span class="token function">RequireClaim</span><span class="token punctuation">(</span><span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//必须有某个Cliam</span>
+    <span class="token punctuation">.</span><span class="token function">RequireClaim</span><span class="token punctuation">(</span><span class="token string">"Account"</span><span class="token punctuation">)</span>
+    <span class="token comment" spellcheck="true">//.Combine(qqEmailPolicy)</span>
+    <span class="token punctuation">.</span><span class="token function">AddRequirements</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CustomExtendRequirement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//内置</span>
+
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"QQEmail"</span><span class="token punctuation">,</span> policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder<span class="token punctuation">.</span>Requirements<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">QQEmailRequirement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"DoubleEmail"</span><span class="token punctuation">,</span> policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder
+  <span class="token punctuation">.</span><span class="token function">AddRequirements</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CustomExtendRequirement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span>Requirements<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">DoubleEmailRequirement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+services<span class="token punctuation">.</span><span class="token generic-method function">AddSingleton<span class="token punctuation">&lt;</span>IAuthorizationHandler<span class="token punctuation">,</span> ZhaoxiMailHandler<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+services<span class="token punctuation">.</span><span class="token generic-method function">AddSingleton<span class="token punctuation">&lt;</span>IAuthorizationHandler<span class="token punctuation">,</span> QQMailHandler<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+services<span class="token punctuation">.</span><span class="token generic-method function">AddSingleton<span class="token punctuation">&lt;</span>IAuthorizationHandler<span class="token punctuation">,</span> CustomExtendRequirementHandler<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这些定制化的Requirement继承自IAuthorizationRequirement，需要有对应的AuthorizationHandler来实现，代码如下：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CustomExtendRequirement</span> <span class="token punctuation">:</span> IAuthorizationRequirement
+<span class="token punctuation">{</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CustomExtendRequirementHandler</span> <span class="token punctuation">:</span> AuthorizationHandler<span class="token operator">&lt;</span>CustomExtendRequirement<span class="token operator">></span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">protected</span> <span class="token keyword">override</span> Task <span class="token function">HandleRequirementAsync</span><span class="token punctuation">(</span>AuthorizationHandlerContext       context<span class="token punctuation">,</span> CustomExtendRequirement requirement<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//context.User.Identities.First().Claims</span>
+
+    <span class="token comment" spellcheck="true">//var jti = context.User.FindFirst("jti")?.Value;// 检查 Jti 是否存在</span>
+    <span class="token keyword">bool</span> tokenExists <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tokenExists<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      context<span class="token punctuation">.</span><span class="token function">Fail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span>
+    <span class="token punctuation">{</span>
+      context<span class="token punctuation">.</span><span class="token function">Succeed</span><span class="token punctuation">(</span>requirement<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// 显式的声明验证成功</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token comment" spellcheck="true">/// &lt;summary></span>
+<span class="token comment" spellcheck="true">/// 两种邮箱都能支持 </span>
+<span class="token comment" spellcheck="true">/// </span>
+<span class="token comment" spellcheck="true">/// &lt;/summary></span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DoubleEmailRequirement</span> <span class="token punctuation">:</span> IAuthorizationRequirement
+<span class="token punctuation">{</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">QQMailHandler</span> <span class="token punctuation">:</span> AuthorizationHandler<span class="token operator">&lt;</span>DoubleEmailRequirement<span class="token operator">></span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">protected</span> <span class="token keyword">override</span> Task <span class="token function">HandleRequirementAsync</span><span class="token punctuation">(</span>AuthorizationHandlerContext context<span class="token punctuation">,</span> DoubleEmailRequirement requirement<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>context<span class="token punctuation">.</span>User <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">HasClaim</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> <span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> email <span class="token operator">=</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">FindFirst</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> <span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Value<span class="token punctuation">;</span>
+      Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>email<span class="token punctuation">.</span><span class="token function">EndsWith</span><span class="token punctuation">(</span><span class="token string">"@qq.com"</span><span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>OrdinalIgnoreCase<span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token punctuation">{</span>
+        context<span class="token punctuation">.</span><span class="token function">Succeed</span><span class="token punctuation">(</span>requirement<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">else</span>
+      <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//context.Fail();//不设置失败</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ZhaoxiMailHandler</span> <span class="token punctuation">:</span> AuthorizationHandler<span class="token operator">&lt;</span>DoubleEmailRequirement<span class="token operator">></span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">protected</span> <span class="token keyword">override</span> Task <span class="token function">HandleRequirementAsync</span><span class="token punctuation">(</span>AuthorizationHandlerContext context<span class="token punctuation">,</span> DoubleEmailRequirement requirement<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>context<span class="token punctuation">.</span>User <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">HasClaim</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> <span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> email <span class="token operator">=</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">FindFirst</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> <span class="token string">"EMail"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Value<span class="token punctuation">;</span>
+      Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>email<span class="token punctuation">.</span><span class="token function">EndsWith</span><span class="token punctuation">(</span><span class="token string">"@ZhaoxiEdu.Net"</span><span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>OrdinalIgnoreCase<span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token punctuation">{</span>
+        context<span class="token punctuation">.</span><span class="token function">Succeed</span><span class="token punctuation">(</span>requirement<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">else</span>
+      <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//context.Fail();</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>小结：</strong><br>自定义策略完成授权：</p>
+<ul>
+<li>Requirement + Handler</li>
+<li>+注册实例+组装Policy</li>
+<li>+标识</li>
+</ul>
+<h2 id="JWT局限性"><a href="#JWT局限性" class="headerlink" title="JWT局限性"></a>JWT局限性</h2><p>基于Token式的传递，鉴权授权，有着天生的缺陷，还欠缺什么？</p>
+<ul>
+<li><p>Token泄漏了—重放攻击</p>
+</li>
+<li><p>改密码了，希望之前的token失效</p>
+</li>
+<li><p>滑动过期—token在用，就别过期</p>
+</li>
+</ul>
+<p>问题很多很多，但是大部分解决不了，是由本质决定的：API和鉴权中心之间是不进行通讯的！<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/Token.png" alt="Token"></p>
+<h3 id="问题1：改密码token过期问题"><a href="#问题1：改密码token过期问题" class="headerlink" title="问题1：改密码token过期问题"></a>问题1：改密码token过期问题</h3><p>改密码肯定要通知一下，不然API如何知道密码改了？例如QQ密码改了，第三方怎么知道？<br>方案一：考虑通过Redis来做中间层。</p>
+<ul>
+<li>生成token时—除了生成token(含guid)—还生成个guid+用户id—写入redis</li>
+<li>验证token时—拿guid去redis校验</li>
+<li>改密码—redis那一项数据—之前的给删掉/过期/无效</li>
+<li>验证旧token—发现过期</li>
+<li>验证新token就没事儿</li>
+</ul>
+<p>细想一下，这不就代表着，客户端和鉴权中心得通信，显然不是很好的方案！</p>
+<p>方案二：减少token有效期—降低伤害</p>
+<p><strong>客户端校验2个扩展点:</strong></p>
+<ol>
+<li>要么是JWT鉴权时的观察者-委托加入逻辑</li>
+<li>要么是授权时基于requirement完成扩展</li>
+</ol>
+<p>颁发Token时，可以指定有效期和生效时间：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">var</span> token <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">JwtSecurityToken</span><span class="token punctuation">(</span>
+  issuer<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Issuer<span class="token punctuation">,</span>
+  audience<span class="token punctuation">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_JWTTokenOptions<span class="token punctuation">.</span>Audience<span class="token punctuation">,</span>
+  claims<span class="token punctuation">:</span> claims<span class="token punctuation">,</span>
+  expires<span class="token punctuation">:</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">60</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//5分钟有效期</span>
+  notBefore<span class="token punctuation">:</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//1分钟后有效</span>
+  signingCredentials<span class="token punctuation">:</span> creds<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在鉴权环节里去进行扩展：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>JwtBearerDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">)</span><span class="token comment" spellcheck="true">//Scheme</span>
+<span class="token punctuation">.</span><span class="token function">AddJwtBearer</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>TokenValidationParameters <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TokenValidationParameters</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//JWT有一些默认的属性，就是给鉴权时就可以筛选了</span>
+    ValidateIssuer <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Issuer</span>
+    ValidateAudience <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证Audience</span>
+    ValidateLifetime <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证失效时间</span>
+    ValidateIssuerSigningKey <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//是否验证SecurityKey</span>
+    ValidAudience <span class="token operator">=</span> tokenOptions<span class="token punctuation">.</span>Audience<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//</span>
+    ValidIssuer <span class="token operator">=</span> tokenOptions<span class="token punctuation">.</span>Issuer<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//Issuer，这两项和前面签发jwt的设置一致</span>
+    IssuerSigningKey <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SymmetricSecurityKey</span><span class="token punctuation">(</span>Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetBytes</span><span class="token punctuation">(</span>tokenOptions<span class="token punctuation">.</span>SecurityKey<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//拿到SecurityKey</span>
+    AudienceValidator <span class="token operator">=</span> <span class="token punctuation">(</span>m<span class="token punctuation">,</span> n<span class="token punctuation">,</span> z<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">></span>
+    <span class="token punctuation">{</span>
+      <span class="token comment" spellcheck="true">//等同于去扩展了下Audience的校验规则---鉴权</span>
+      <span class="token keyword">return</span> m <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> m<span class="token punctuation">.</span><span class="token function">FirstOrDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>Configuration<span class="token punctuation">[</span><span class="token string">"audience"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    LifetimeValidator <span class="token operator">=</span> <span class="token punctuation">(</span>notBefore<span class="token punctuation">,</span> expires<span class="token punctuation">,</span> securityToken<span class="token punctuation">,</span> validationParameters<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">></span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> notBefore <span class="token operator">&lt;=</span> DateTime<span class="token punctuation">.</span>Now <span class="token operator">&amp;&amp;</span> expires <span class="token operator">>=</span> DateTime<span class="token punctuation">.</span>Now<span class="token punctuation">;</span>
+      <span class="token comment" spellcheck="true">//&amp;&amp; validationParameters</span>
+    <span class="token punctuation">}</span><span class="token comment" spellcheck="true">//自定义校验规则</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在授权环节里进行扩展：<br>通过Requirement叠加规则，拿到context.User.Identities.First().Claims之后就可以随便操作。</p>
+<h3 id="问题2：重放攻击"><a href="#问题2：重放攻击" class="headerlink" title="问题2：重放攻击"></a>问题2：重放攻击</h3><ul>
+<li>重复请求—-请求带个随机数—随机数搞个Redis—执行前先redis一下</li>
+<li>随机数不是在token</li>
+</ul>
+<h3 id="问题3：滑动过期"><a href="#问题3：滑动过期" class="headerlink" title="问题3：滑动过期"></a>问题3：滑动过期</h3><ul>
+<li>Token是不会变的，而且只能鉴权中心发的</li>
+<li>不能默认检测有效期—可以扩展<strong>校验</strong>—当然也可以放在requirement</li>
+<li>还是写入Redis—这个滑动</li>
+</ul>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com" rel="external nofollow noreferrer">Chaoqiang</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com/2020/05/29/netcore-authentication-authorization2/">https://www.zhengchaoqiang.com/2020/05/29/netcore-authentication-authorization2/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="https://www.zhengchaoqiang.com" target="_blank">Chaoqiang</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/Net-Core/">
+                                    <span class="chip bg-color">Net Core</span>
+                                </a>
+                            
+                                <a href="/tags/JWT/">
+                                    <span class="chip bg-color">JWT</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你要请我吃糖嘛!</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechatpay.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("/medias/comment_bg.png") 100% 100% no-repeat;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #4cbf30;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="vcomments" class="card-content" style="display: grid">
+    </div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'n7QWLgVufdyFqbDlUDEznVhx-gzGzoHsz',
+        appKey: 'YGPdAIijkOPzqgi0LlHI52ex',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: 'just go go'
+    });
+</script>
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2020/06/06/netcore-authentication-authorization3/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="Netcore认证授权与IdentityServer4（3）IdentityServer4详解">
+                        
+                        <span class="card-title">Netcore认证授权与IdentityServer4（3）IdentityServer4详解</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            主要内容
+OAuth2.0&amp;Token
+IdentityServer4-四模式实现
+授权策略和扩展
+OIDC-Hybrid
+
+OAuth 2.0什么是OAuth 2.0?
+
+授权机制，是一种规范/委托协议，制定了授权流程；它可以让那
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-06-06
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                    .Net Core Learning Series
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Net-Core/">
+                        <span class="chip bg-color">Net Core</span>
+                    </a>
+                    
+                    <a href="/tags/IdentityServer4/">
+                        <span class="chip bg-color">IdentityServer4</span>
+                    </a>
+                    
+                    <a href="/tags/OAuth-2-0/">
+                        <span class="chip bg-color">OAuth 2.0</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/05/23/netcore-authentication-authorization/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Netcore认证授权与IdentityServer4（1）鉴权授权源码">
+                        
+                        <span class="card-title">Netcore认证授权与IdentityServer4（1）鉴权授权源码</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            主要概要这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：
+
+鉴权授权流程变化
+源码解读鉴权
+源码解读多授权策略
+JWT和Identity
+
+
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-23
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                    .Net Core Learning Series
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Net-Core/">
+                        <span class="chip bg-color">Net Core</span>
+                    </a>
+                    
+                    <a href="/tags/Authentication/">
+                        <span class="chip bg-color">Authentication</span>
+                    </a>
+                    
+                    <a href="/tags/Authorization/">
+                        <span class="chip bg-color">Authorization</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: chaoqiang&#39;s Blog<br />'
+            + '文章作者: chaoqiang<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            <span>
+                <div>
+                    <span style="color:#ffffff;">Copyright&copy; 2020 chaoqiang. All Rights Reserved</span>
+                </div>
+                
+                <div style="width:500px;margin:0 auto; padding:0px 0;">
+                    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050702010849" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                        <img src="https://blog-icp-1257411902.cos.ap-shanghai.myqcloud.com/icp.png" style="float:left;"/>
+                        <span style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;">苏公网安备 32050702010849号 苏ICP备20017637号</span>
+                    </a>
+                    <!-- <span style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;"> 苏ICP备20017637号</span> -->
+                </div>
+            </span>
+            <span id="sitetime"></span>
+        </div>
+
+    
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已勉强运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+
+
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" color="0,0,255"
+        pointColor="0,0,255" opacity='0.7'
+        zIndex="-1" count="99"
+        src="/libs/background/canvas-nest.js"></script>
+    
+
+    
+
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+     <!-- Chaoqiang shw2018 add 2019.08.28 -->
+     <script type="text/javascript">
+        var OriginTitile = document.title,
+            st;
+        document.addEventListener("visibilitychange", function () {
+            document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                    document.title = OriginTitile
+                }, 3e3))
+        })
+    </script>
+
+    <!-- 鼠标点击烟花爆炸效果  Chaoqiang shw2018 add 2019.09.09 -->
+    
+        <canvas class="fireworks" style="position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+        <script type="text/javascript" src="/js/fireworks.js"></script>
+    
+
+    <!-- 背景雪花飘落特效Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 鼠标点击文字特效 Chaoqiang shw2018 add 2019.09.10-->
+    
+        <script src="/js/wenzi.js" type="text/javascript"></script>
+    
+
+    <!-- 背景雪花飘落特效 Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 在线聊天工具  Chaoqiang shw2018 add 2019.09.11 -->
+    
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":200},"mobile":{"show":false},"react":{"opacity":0.7}});</script><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

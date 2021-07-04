@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>chaoqiang&#39;s Blog</title>
+  
+  <subtitle>Stay hungry. Stay Foolish.</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://www.zhengchaoqiang.com/"/>
+  <updated>2021-07-03T14:11:47.022Z</updated>
+  <id>https://www.zhengchaoqiang.com/</id>
+  
+  <author>
+    <name>chaoqiang</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>PMP(Project Management Professional) Learning</title>
+    <link href="https://www.zhengchaoqiang.com/2021/07/03/pmplearning/"/>
+    <id>https://www.zhengchaoqiang.com/2021/07/03/pmplearning/</id>
+    <published>2021-07-03T10:32:39.000Z</published>
+    <updated>2021-07-03T14:11:47.022Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;我的PMP之旅&quot;&gt;&lt;a href=&quot;#我的PMP之旅&quot; class=&quot;headerlink&quot; title=&quot;我的PMP之旅&quot;&gt;&lt;/a&gt;我的PMP之旅&lt;/h2&gt;&lt;p&gt;自己学习PMP的一些感受，体会，经验。。。&lt;/p&gt;
+&lt;h2 id=&quot;PMP简介&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="PMP" scheme="https://www.zhengchaoqiang.com/tags/PMP/"/>
+    
+      <category term="Project Management" scheme="https://www.zhengchaoqiang.com/tags/Project-Management/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2021-Annual-Review-and-Planning</title>
+    <link href="https://www.zhengchaoqiang.com/2020/12/29/2021-annual-review-and-planning/"/>
+    <id>https://www.zhengchaoqiang.com/2020/12/29/2021-annual-review-and-planning/</id>
+    <published>2020-12-29T10:53:44.000Z</published>
+    <updated>2021-01-02T09:44:37.523Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;2020年回顾&quot;&gt;&lt;a href=&quot;#2020年回顾&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="Diary" scheme="https://www.zhengchaoqiang.com/categories/Diary/"/>
+    
+    
+      <category term="Yearly Planning" scheme="https://www.zhengchaoqiang.com/tags/Yearly-Planning/"/>
+    
+      <category term="Yearly Review" scheme="https://www.zhengchaoqiang.com/tags/Yearly-Review/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Docker-Crash-Tutorial</title>
+    <link href="https://www.zhengchaoqiang.com/2020/06/24/docker-crash-tutorial/"/>
+    <id>https://www.zhengchaoqiang.com/2020/06/24/docker-crash-tutorial/</id>
+    <published>2020-06-24T12:51:29.000Z</published>
+    <updated>2020-06-26T03:38:23.201Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要内容&quot;&gt;&lt;a href=&quot;#主要内容&quot; class=&quot;headerlink&quot; title=&quot;主要内容&quot;&gt;&lt;/a&gt;主要内容&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Docker  VS 
+        
+      
+    
+    </summary>
+    
+      <category term="Docker Crash Tutorial" scheme="https://www.zhengchaoqiang.com/categories/Docker-Crash-Tutorial/"/>
+    
+    
+      <category term="Docker" scheme="https://www.zhengchaoqiang.com/tags/Docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Netcore认证授权与IdentityServer4（3）IdentityServer4详解</title>
+    <link href="https://www.zhengchaoqiang.com/2020/06/06/netcore-authentication-authorization3/"/>
+    <id>https://www.zhengchaoqiang.com/2020/06/06/netcore-authentication-authorization3/</id>
+    <published>2020-06-06T01:18:31.000Z</published>
+    <updated>2021-06-06T08:24:54.876Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要内容&quot;&gt;&lt;a href=&quot;#主要内容&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+      <category term="IdentityServer4" scheme="https://www.zhengchaoqiang.com/tags/IdentityServer4/"/>
+    
+      <category term="OAuth 2.0" scheme="https://www.zhengchaoqiang.com/tags/OAuth-2-0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Netcore认证授权与IdentityServer4（2）JWT</title>
+    <link href="https://www.zhengchaoqiang.com/2020/05/29/netcore-authentication-authorization2/"/>
+    <id>https://www.zhengchaoqiang.com/2020/05/29/netcore-authentication-authorization2/</id>
+    <published>2020-05-29T12:13:35.000Z</published>
+    <updated>2020-06-14T14:11:34.277Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要概要&quot;&gt;&lt;a href=&quot;#主要概要&quot; class=&quot;headerlink&quot; title=&quot;主要概要&quot;&gt;&lt;/a&gt;主要概要&lt;/h2&gt;&lt;p&gt;这个文章主要来聊一聊Net Core中的认证与授权，以及Net
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+      <category term="JWT" scheme="https://www.zhengchaoqiang.com/tags/JWT/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Netcore认证授权与IdentityServer4（1）鉴权授权源码</title>
+    <link href="https://www.zhengchaoqiang.com/2020/05/23/netcore-authentication-authorization/"/>
+    <id>https://www.zhengchaoqiang.com/2020/05/23/netcore-authentication-authorization/</id>
+    <published>2020-05-23T06:20:13.000Z</published>
+    <updated>2020-06-14T14:11:37.611Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要概要&quot;&gt;&lt;a href=&quot;#主要概要&quot; class=&quot;headerlink&quot; title=&quot;主要概要&quot;&gt;&lt;/a&gt;主要概要&lt;/h2&gt;&lt;p&gt;这个文章主要来聊一聊Net Core中的认证与授权，以及Net
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+      <category term="Authentication" scheme="https://www.zhengchaoqiang.com/tags/Authentication/"/>
+    
+      <category term="Authorization" scheme="https://www.zhengchaoqiang.com/tags/Authorization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NetCore 开发实战（2）——微服务实战</title>
+    <link href="https://www.zhengchaoqiang.com/2020/05/02/netcore-programing-and-practice2/"/>
+    <id>https://www.zhengchaoqiang.com/2020/05/02/netcore-programing-and-practice2/</id>
+    <published>2020-05-02T06:45:12.000Z</published>
+    <updated>2020-06-14T14:11:44.083Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;26-工程结构概览：定义应用分层及依赖关系&quot;&gt;&lt;a href=&quot;#26-工程结构概览：定义应用分层及依赖关系&quot; class=&quot;headerlink&quot; title=&quot;26 | 工程结构概览：定义应用分层及依赖关系&quot;&gt;&lt;/a&gt;26 |
+        
+      
+    
+    </summary>
+    
+      <category term="NetCore 开发实战" scheme="https://www.zhengchaoqiang.com/categories/NetCore-%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NetCore 开发实战（1）——必备知识</title>
+    <link href="https://www.zhengchaoqiang.com/2020/04/19/netcore-programing-and-practice/"/>
+    <id>https://www.zhengchaoqiang.com/2020/04/19/netcore-programing-and-practice/</id>
+    <published>2020-04-19T04:48:57.000Z</published>
+    <updated>2020-06-14T14:11:50.984Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;01-简介&quot;&gt;&lt;a href=&quot;#01-简介&quot; class=&quot;headerlink&quot; title=&quot;01 | 简介&quot;&gt;&lt;/a&gt;01 | 简介&lt;/h2&gt;&lt;h3 id=&quot;为什么要学习-NET-Core&quot;&gt;&lt;a href=&quot;#为什么要学习-NET-Core&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="NetCore 开发实战" scheme="https://www.zhengchaoqiang.com/categories/NetCore-%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DotNet-Advanced-Series-3-3-NetCoreSourceCode</title>
+    <link href="https://www.zhengchaoqiang.com/2020/04/06/dotnet-advanced-series-3-3-netcoresourcecode/"/>
+    <id>https://www.zhengchaoqiang.com/2020/04/06/dotnet-advanced-series-3-3-netcoresourcecode/</id>
+    <published>2020-04-06T01:22:52.000Z</published>
+    <updated>2020-06-14T14:12:01.212Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;编译的目的&quot;&gt;&lt;a href=&quot;#编译的目的&quot; class=&quot;headerlink&quot; title=&quot;编译的目的&quot;&gt;&lt;/a&gt;编译的目的&lt;/h2&gt;&lt;p&gt;debug版本的运行时，调试源码，一行不差。&lt;/p&gt;
+&lt;h2 id=&quot;NET-Core-源码编译&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DotNet-Advanced-Series-3-2-CommandLine</title>
+    <link href="https://www.zhengchaoqiang.com/2020/04/04/dotnet-advanced-series-3-2-commandline/"/>
+    <id>https://www.zhengchaoqiang.com/2020/04/04/dotnet-advanced-series-3-2-commandline/</id>
+    <published>2020-04-04T01:16:28.000Z</published>
+    <updated>2020-06-14T14:12:14.098Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要内容：&quot;&gt;&lt;a href=&quot;#主要内容：&quot; class=&quot;headerlink&quot; title=&quot;主要内容：&quot;&gt;&lt;/a&gt;主要内容：&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;dotnet new 命令，创建项目&lt;/li&gt;
+&lt;li&gt;dotnet sln  命令
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DotNet-Advanced-Series-3-1-BasicTheory</title>
+    <link href="https://www.zhengchaoqiang.com/2020/04/04/dotnet-advanced-series-3-1-basictheory/"/>
+    <id>https://www.zhengchaoqiang.com/2020/04/04/dotnet-advanced-series-3-1-basictheory/</id>
+    <published>2020-04-04T01:14:44.000Z</published>
+    <updated>2020-06-14T14:12:20.696Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;.NET Core 到底是什么？&lt;/strong&gt;&lt;br&gt;.NET Core 是小型的、高效的、可以通过文件复制直接部署的跨平台框架。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;备受大家关注？&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;.NET Core
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DotNet-Advanced-Series-5-2-MicroService</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/16/dotnet-advanced-series-5-2-microservice/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/16/dotnet-advanced-series-5-2-microservice/</id>
+    <published>2020-03-16T12:11:11.000Z</published>
+    <updated>2021-01-02T09:44:37.651Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;1-主要内容概要&quot;&gt;&lt;a href=&quot;#1-主要内容概要&quot; class=&quot;headerlink&quot; title=&quot;1. 主要内容概要&quot;&gt;&lt;/a&gt;1.
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+      <category term="MicroService" scheme="https://www.zhengchaoqiang.com/tags/MicroService/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TypeScript Basic Tutorial (11)</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-11/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-11/</id>
+    <published>2020-03-14T12:58:55.000Z</published>
+    <updated>2020-06-14T14:01:53.395Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;装饰器&quot;&gt;&lt;a href=&quot;#装饰器&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="TypeScript Basic Tutorial" scheme="https://www.zhengchaoqiang.com/categories/TypeScript-Basic-Tutorial/"/>
+    
+    
+      <category term="TypeScript" scheme="https://www.zhengchaoqiang.com/tags/TypeScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TypeScript Basic Tutorial (10)</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-10/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-10/</id>
+    <published>2020-03-14T12:53:26.000Z</published>
+    <updated>2020-06-14T14:00:49.378Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;命名空间&quot;&gt;&lt;a href=&quot;#命名空间&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="TypeScript Basic Tutorial" scheme="https://www.zhengchaoqiang.com/categories/TypeScript-Basic-Tutorial/"/>
+    
+    
+      <category term="TypeScript" scheme="https://www.zhengchaoqiang.com/tags/TypeScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TypeScript Basic Tutorial (9)</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-09/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/14/typescript-learning-series-09/</id>
+    <published>2020-03-14T12:25:32.000Z</published>
+    <updated>2020-06-14T14:00:42.617Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;模块&quot;&gt;&lt;a href=&quot;#模块&quot; class=&quot;headerlink&quot; title=&quot;模块&quot;&gt;&lt;/a&gt;模块&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;模块的的概念（官方）:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;关于术语的一点说明:
+        
+      
+    
+    </summary>
+    
+      <category term="TypeScript Basic Tutorial" scheme="https://www.zhengchaoqiang.com/categories/TypeScript-Basic-Tutorial/"/>
+    
+    
+      <category term="TypeScript" scheme="https://www.zhengchaoqiang.com/tags/TypeScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Angular Crash Tutorial</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/12/angular-crash-tutorial/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/12/angular-crash-tutorial/</id>
+    <published>2020-03-12T11:30:03.000Z</published>
+    <updated>2020-06-14T14:02:11.812Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;1-Angular-快速入门&quot;&gt;&lt;a href=&quot;#1-Angular-快速入门&quot; class=&quot;headerlink&quot; title=&quot;1.Angular 快速入门&quot;&gt;&lt;/a&gt;1.Angular
+        
+      
+    
+    </summary>
+    
+      <category term="Angular Crash Tutorial" scheme="https://www.zhengchaoqiang.com/categories/Angular-Crash-Tutorial/"/>
+    
+    
+      <category term="Angular" scheme="https://www.zhengchaoqiang.com/tags/Angular/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DotNet-Advanced-Series-5-1-NetCore31Start</title>
+    <link href="https://www.zhengchaoqiang.com/2020/03/07/dotnet-advanced-series-5-1-netcore31start/"/>
+    <id>https://www.zhengchaoqiang.com/2020/03/07/dotnet-advanced-series-5-1-netcore31start/</id>
+    <published>2020-03-07T01:54:19.000Z</published>
+    <updated>2020-06-14T14:12:20.699Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要内容概要&quot;&gt;&lt;a href=&quot;#主要内容概要&quot; class=&quot;headerlink&quot; title=&quot;主要内容概要&quot;&gt;&lt;/a&gt;主要内容概要&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;平台概述 环境搭建 项目建立 运行&lt;/li&gt;
+&lt;li&gt;pay for what you
+        
+      
+    
+    </summary>
+    
+      <category term=".Net Core Learning Series" scheme="https://www.zhengchaoqiang.com/categories/Net-Core-Learning-Series/"/>
+    
+    
+      <category term="Net Core" scheme="https://www.zhengchaoqiang.com/tags/Net-Core/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TypeScript Basic Tutorial (8)</title>
+    <link href="https://www.zhengchaoqiang.com/2020/02/29/typescript-learning-series-08/"/>
+    <id>https://www.zhengchaoqiang.com/2020/02/29/typescript-learning-series-08/</id>
+    <published>2020-02-29T11:29:48.000Z</published>
+    <updated>2020-06-14T14:00:37.105Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;泛型&quot;&gt;&lt;a href=&quot;#泛型&quot; class=&quot;headerlink&quot; title=&quot;泛型&quot;&gt;&lt;/a&gt;泛型&lt;/h2&gt;&lt;p&gt;泛型：软件工程中，我们不仅要创建一致的定义良好的API，同时也要考虑可重用性。
+        
+      
+    
+    </summary>
+    
+      <category term="TypeScript Basic Tutorial" scheme="https://www.zhengchaoqiang.com/categories/TypeScript-Basic-Tutorial/"/>
+    
+    
+      <category term="TypeScript" scheme="https://www.zhengchaoqiang.com/tags/TypeScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TypeScript Basic Tutorial (7)</title>
+    <link href="https://www.zhengchaoqiang.com/2020/02/29/typescript-learning-series-07/"/>
+    <id>https://www.zhengchaoqiang.com/2020/02/29/typescript-learning-series-07/</id>
+    <published>2020-02-29T10:30:59.000Z</published>
+    <updated>2020-06-14T14:00:28.602Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;接口&quot;&gt;&lt;a href=&quot;#接口&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="TypeScript Basic Tutorial" scheme="https://www.zhengchaoqiang.com/categories/TypeScript-Basic-Tutorial/"/>
+    
+    
+      <category term="TypeScript" scheme="https://www.zhengchaoqiang.com/tags/TypeScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2020-Architecture-1-1 从计算机原理看架构设计</title>
+    <link href="https://www.zhengchaoqiang.com/2020/02/29/2020-architecture-1-1/"/>
+    <id>https://www.zhengchaoqiang.com/2020/02/29/2020-architecture-1-1/</id>
+    <published>2020-02-29T01:50:58.000Z</published>
+    <updated>2020-06-14T13:58:26.029Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;主要内容概要&quot;&gt;&lt;a href=&quot;#主要内容概要&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="2020-Architecture" scheme="https://www.zhengchaoqiang.com/categories/2020-Architecture/"/>
+    
+    
+      <category term="CPU Operation" scheme="https://www.zhengchaoqiang.com/tags/CPU-Operation/"/>
+    
+      <category term="Storage Architecture" scheme="https://www.zhengchaoqiang.com/tags/Storage-Architecture/"/>
+    
+      <category term="Buffering and Caching" scheme="https://www.zhengchaoqiang.com/tags/Buffering-and-Caching/"/>
+    
+  </entry>
+  
+</feed>

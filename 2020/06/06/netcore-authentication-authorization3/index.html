@@ -1,0 +1,2051 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Netcore认证授权与IdentityServer4（3）IdentityServer4详解, Bosch SEU chaoqiang Mechanics Eletronics 超强 micro-service Intelligent-Manufacturing MES">
+    <meta name="description" content="主要内容
+OAuth2.0&amp;amp;Token
+IdentityServer4-四模式实现
+授权策略和扩展
+OIDC-Hybrid
+
+OAuth 2.0什么是OAuth 2.0?
+
+授权机制，是一种规范/委托协议，制定了授权流程；它可以让那">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Netcore认证授权与IdentityServer4（3）IdentityServer4详解 | chaoqiang&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">chaoqiang's Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/AV" class="waves-effect waves-light">
+
+      
+      <i class="fas fa-list" style="zoom: 0.6;"></i>
+      
+      <span>Medias</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/Music">
+          
+          <i class="fas fa-music" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Musics</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Movie">
+          
+          <i class="fas fa-film" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Movies</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Book">
+          
+          <i class="fas fa-book" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Books</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/AV">
+          
+          <i class="fas fa-image" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Galleries</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">chaoqiang's Blog</div>
+        <div class="logo-desc">
+            
+            博世互联工业 | 智能制造 | 微服务架构 | 东南大学 | 机械电子工程
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa-fw fas fa-list"></i>
+			
+			Medias
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>   
+				
+                  <a href="/Music " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-music" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Musics</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Movie " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-film" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Movies</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Book " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-book" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Books</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/AV " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-image" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Galleries</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/Zhengchaoqiang" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/Zhengchaoqiang" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+<script src="/libs/cryptojs/crypto-js.min.js"></script>
+<script>
+    (function() {
+        let pwd = '';
+        if (pwd && pwd.length > 0) {
+            if (pwd !== CryptoJS.SHA256(prompt('请输入访问本文章的密码')).toString(CryptoJS.enc.Hex)) {
+                alert('密码错误，将返回主页！');
+                location.href = '/';
+            }
+        }
+    })();
+</script>
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">Netcore认证授权与IdentityServer4（3）IdentityServer4详解</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/Net-Core/">
+                                <span class="chip bg-color">Net Core</span>
+                            </a>
+                        
+                            <a href="/tags/IdentityServer4/">
+                                <span class="chip bg-color">IdentityServer4</span>
+                            </a>
+                        
+                            <a href="/tags/OAuth-2-0/">
+                                <span class="chip bg-color">OAuth 2.0</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                .Net Core Learning Series
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-06-06
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2021-06-06
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    5.5k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    21 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a>主要内容</h2><ol>
+<li>OAuth2.0&amp;Token</li>
+<li>IdentityServer4-四模式实现</li>
+<li>授权策略和扩展</li>
+<li>OIDC-Hybrid</li>
+</ol>
+<h2 id="OAuth-2-0"><a href="#OAuth-2-0" class="headerlink" title="OAuth 2.0"></a>OAuth 2.0</h2><p><strong>什么是OAuth 2.0?</strong></p>
+<ul>
+<li>授权机制，是一种规范/委托协议，制定了授权流程；它可以让那些控制资源的人允许某个应用以代表他们来访问他们控制的资源，值得注意的是，代表这些人，而不是假冒或模仿这些人。这个应用从资源的所有者那里获得到授权（Authorization）和Access Token，随后就可以使用这个access token来进行访问资源。</li>
+<li>解决授权问题，大家都遵守，才好沟通。</li>
+<li>OAuth 2.0 授权Authorization,你能干什么；OIDC 身份认证，Authentication 你是谁；</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/Token.png" alt="Token"><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Relationship.png" alt=""></p>
+<p><strong>为什么需要授权？</strong><br>送外卖的故事：<br>美团-饿了么-蜂鸟-跑腿小递<br>很多快递要进小区(假设能进来)<br>小区有密码锁—能给密码吗–不行</p>
+<p>假设每次进来都打电话—确认了—放行—每次都要找我<br>假设弄个临时密码(有效期短点)—假如不再点饿了么—取消密码—大家都失效<br>一人一个临时密码—临时密码找我拿的—声明自己的身份—我确认了—给你个东西(临时密码/Token)—然后你就能进来—下次你还能进来</p>
+<p>授权服务器做中介流程图：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuth.png" alt=""></p>
+<p><strong>这里的token(带点信息)使用过程 就是授权机制</strong></p>
+<ul>
+<li>数据所有者告诉系统，同意授权第三方应用进入系统，获取这些数据。</li>
+<li>系统从而产生一个短期的进入令牌（token），用来代替密码，</li>
+<li>供第三方应用使用。</li>
+<li>规范了下授权的流程</li>
+</ul>
+<h3 id="Token-VS-密码"><a href="#Token-VS-密码" class="headerlink" title="Token  VS 密码"></a>Token  VS 密码</h3><ul>
+<li>都能进入系统，丢失后都是有风险的</li>
+<li>Token短期的，密码是长期</li>
+<li>令牌可以取消，密码只能修改(影响全部)</li>
+<li>Token可以控制权限，scope</li>
+<li>OAuth，就是Token比密码安全</li>
+</ul>
+<h3 id="OAuth2-0-四种授权"><a href="#OAuth2-0-四种授权" class="headerlink" title="OAuth2.0 四种授权"></a>OAuth2.0 四种授权</h3><ul>
+<li>客户端凭证（client credentials）<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials.jpg" alt=""></li>
+<li>密码式（password）<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/password.jpg" alt=""></li>
+<li>隐藏式（implicit）<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/implicit.jpg" alt=""></li>
+<li>授权码（authorization-code）<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/authorization-code.jpg" alt=""><br>以用户访问豆瓣为例，需用通过QQ授权服务来实现登录，使用code模式：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuthDemo.jpg" alt=""></li>
+</ul>
+<h3 id="OAuth2-0-中的几个关键概念"><a href="#OAuth2-0-中的几个关键概念" class="headerlink" title="OAuth2.0 中的几个关键概念"></a>OAuth2.0 中的几个关键概念</h3><h4 id="端点-Endpoint"><a href="#端点-Endpoint" class="headerlink" title="端点 Endpoint"></a>端点 Endpoint</h4><p>Authorization ENdpoint 授权端点<br>Token Endpoint, Token端点<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/EndPoints.png" alt=""></p>
+<h4 id="范围-Scope"><a href="#范围-Scope" class="headerlink" title="范围 Scope"></a>范围 Scope</h4><p>代表资源所有者在被保护资源那里的一些权限。</p>
+<h4 id="Access-Token"><a href="#Access-Token" class="headerlink" title="Access Token"></a>Access Token</h4><ul>
+<li>有时候就叫Token</li>
+<li>用来访问被保护资源的凭据</li>
+<li>代表了给客户端颁发的授权，也就是委托给客户端的权限</li>
+<li>描述出Scope，有效期</li>
+</ul>
+<h4 id="Refresh-Token"><a href="#Refresh-Token" class="headerlink" title="Refresh Token"></a>Refresh Token</h4><ul>
+<li>用来获取Access Token的凭据</li>
+<li>由Authorization Server 颁发给客户端应用的</li>
+<li>可选</li>
+<li>具备让客户端应用逐渐降低党文权限的能力</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/RefreshToken1.png" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/RefreshToken2.png" alt=""></p>
+<h4 id="OAuth2-0-发生错误"><a href="#OAuth2-0-发生错误" class="headerlink" title="OAuth2.0 发生错误"></a>OAuth2.0 发生错误</h4><ul>
+<li>error</li>
+<li>error_description</li>
+<li>error_uri</li>
+<li>state</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuthError.png" alt=""></p>
+<p>下面是几种错误类型：</p>
+<ul>
+<li>invalid_request</li>
+<li>invalid_client(401)</li>
+<li>invalid_grant</li>
+<li>unauthorized_client</li>
+<li>unsupported_grant_type</li>
+<li>invalid_scope</li>
+</ul>
+<h2 id="OpenID-Connect"><a href="#OpenID-Connect" class="headerlink" title="OpenID Connect"></a>OpenID Connect</h2><p>OAuth 2.0不是身份认证协议<br>什么是身份认证协议？<br>它可以告诉应用程序当前的用户是谁，还有这些用户是否正在使用你的应用程序，它是一种安全架构，它可以告诉你用户使他们所声明的身份；通常，是通过提供一套安全凭据（例如用户名和密码）给应用程序来证明这一点。</p>
+<h3 id="身份认证-VS-授权"><a href="#身份认证-VS-授权" class="headerlink" title="身份认证 VS 授权"></a>身份认证 VS 授权</h3><ul>
+<li>身份认证 Authentication </li>
+<li>授权 Authorization</li>
+</ul>
+<p>引用《OAuth 2.0 in Action》里面的一个比喻，把身份认证看作是软糖，而授权是巧克力。这两种东西感觉略有相似，但是本质上确实截然不同的：巧克力是一种原料，而软糖是一种糖果。可以使用巧克力作为主要预料做出巧克力口味的糖果，但是巧克力和软糖不是等价的。</p>
+<p>尽管巧克力可以单独作为一种最终产品，但是在这个比喻里面巧克力是一种非常有用的原料，它极具多样性，可以用来做蛋糕，冰淇淋，雪糕等。</p>
+<p>要制作巧克力软糖，也就是需要一个基于OAuth 2.0的身份认证协议。而OpenId Connect就是这样一个开放标准，它可以工作于不同的身份和供应商之间。OpenId Connect基于OAuth 2.0，在此之上，它添加了一些组件来提供身份认证能力。</p>
+<p>OpenID Connect 的官方定义是： OpenID Connect 是建立在OAuth2.0 协议上的一个简单的身份标识层，OpenID Connect兼容OAuth 2.0.</p>
+<p>OAuth 2.0与身份认证协议的角色映射如下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuthRole.png" alt=""></p>
+<p><strong>为什么不使用OAuth 2.0里面的Access Token来解决这个问题呢？</strong></p>
+<ul>
+<li>Access Token不含有身份认证的信息</li>
+<li>生命周期可能很长，用户离开了，它仍有效</li>
+<li>Access Token可能被其他客户端借用</li>
+<li>Access Token不是为客户端准备的，它对客户端不透明，但是客户端可以从Access Token里得到一些用户信息。Access Token的真正目的是保护资源。</li>
+</ul>
+<h3 id="OIDC的具体内容"><a href="#OIDC的具体内容" class="headerlink" title="OIDC的具体内容"></a>OIDC的具体内容</h3><ul>
+<li>ID Token</li>
+<li>UserInfo端点</li>
+<li>提供一组表示身份的scopes和claims: profile email address phone</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OIDC.png" alt=""></p>
+<h3 id="OIDC的三个流程"><a href="#OIDC的三个流程" class="headerlink" title="OIDC的三个流程"></a>OIDC的三个流程</h3><ul>
+<li>Authorization Code Flow</li>
+<li>Implicit Flow</li>
+<li>Hybrid Flow</li>
+</ul>
+<h2 id="IdentityServer4"><a href="#IdentityServer4" class="headerlink" title="IdentityServer4"></a>IdentityServer4</h2><p><strong>IdentityServer4</strong>: ASP.NET CORE量身定制，实现了OpenID Connect和OAuth2.0协议，是认证授权中间件。<br>IdentityServer4有两种token，一种就是JWT Token，另一种是Reference Token，中心化的Token，需要每次校验都是访问鉴权授权中心的，一般不怎么使用。</p>
+<h3 id="创建鉴权授权中心"><a href="#创建鉴权授权中心" class="headerlink" title="创建鉴权授权中心"></a>创建鉴权授权中心</h3><h4 id="Step1-下载IdentityServer4的模板"><a href="#Step1-下载IdentityServer4的模板" class="headerlink" title="Step1 下载IdentityServer4的模板"></a>Step1 下载IdentityServer4的模板</h4><p>参考Id4官方文档：<a href="https://identityserver4.readthedocs.io/en/latest/quickstarts/0_overview.html" target="_blank" rel="noopener">https://identityserver4.readthedocs.io/en/latest/quickstarts/0_overview.html</a><br>首先使用命令安装模板：<br> <code>dotnet new -i IdentityServer4.Templates</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/id4Template.png" alt=""></p>
+<h4 id="Step2-创建一个带UI的Id4项目"><a href="#Step2-创建一个带UI的Id4项目" class="headerlink" title="Step2 创建一个带UI的Id4项目"></a>Step2 创建一个带UI的Id4项目</h4><p>这里我们创建一个数据存放在内存中的Id4模板，命名为Chaoqiang.Demo.Id4<br>使用命令创建项目：<br><code>dotnet new is4inmem --name Chaoqiang.Demo.Id4</code><br>使用命令创建解决方案Chaoqiang.Demo并添加项目Chaoqiang.Demo.Id4到该解决方案中：<br><code>dotnet new sln -n Chaoqiang.Demo</code><br><code>dotnet sln add .\Chaoqiang.Demo.Id4\Chaoqiang.Demo.Id4.csproj</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/CreateId4Project.png" alt=""></p>
+<h4 id="Step3-启动Id4项目"><a href="#Step3-启动Id4项目" class="headerlink" title="Step3 启动Id4项目"></a>Step3 启动Id4项目</h4><p>启动该项目如下图所示：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/CreateId4Project2.png" alt=""></p>
+<h4 id="Step4-结合代码理解Id4用法"><a href="#Step4-结合代码理解Id4用法" class="headerlink" title="Step4 结合代码理解Id4用法"></a>Step4 结合代码理解Id4用法</h4><p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Id4items.png" alt=""><br>这里只以startup为例描述id4这个中间件是如何被使用的，这其中还有很多放在内存中的资源和客户端，可以自行查看。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/startup.png" alt=""></p>
+<h3 id="OAuth-2-0-Client-Credentials"><a href="#OAuth-2-0-Client-Credentials" class="headerlink" title="OAuth 2.0 Client Credentials"></a>OAuth 2.0 Client Credentials</h3><p> 先从最简单的客户端这种模式开始，不代表用户，也就没有用户信息。</p>
+<h4 id="Id4改造"><a href="#Id4改造" class="headerlink" title="Id4改造"></a>Id4改造</h4><p> 首先我们对Id4项目进行一些改造，添加我们自己创建的Client到内存中；<br> <img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Client_Credentials_Startup.png" alt=""><br> <img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Client_Credentials_Config.png" alt=""></p>
+<h4 id="创建客户端"><a href="#创建客户端" class="headerlink" title="创建客户端"></a>创建客户端</h4><p>首先，我们创建一个<code>01ConsoleClient</code>的控制台客户端应用，在控制台中使用客户端模式（client_credentials）这种方式来访问Id4。<br>在这个控制台中，我们会去做这几件事，第一，查看Id4的document信息；第二，根据对应信息，获取access token；第三，访问带验证的API资源（需要先创建API）；</p>
+<h4 id="解析Id4的document"><a href="#解析Id4的document" class="headerlink" title="解析Id4的document"></a>解析Id4的document</h4><p>控制台需要使用Nuget package <strong>IdentityModel</strong>，这个Model的作用就是可以方便的解析Id4的document.<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Client_Credentials_Console.png" alt=""><br>这里我们可以看一下Id4的文件解析格式，访问如下地址：<br><code>http://localhost:5000/.well-known/openid-configuration</code><br>这个openid-configuration的文件中包含了很多我们需要的信息：</p>
+<ul>
+<li>authorization_endpoint: “<a href="http://localhost:5000/connect/authorize" target="_blank" rel="noopener">http://localhost:5000/connect/authorize</a>“,</li>
+<li>token_endpoint: 获取token的地址 “<a href="http://localhost:5000/connect/token" target="_blank" rel="noopener">http://localhost:5000/connect/token</a>“,</li>
+<li>userinfo_endpoint: 获取用户信息的地址”<a href="http://localhost:5000/connect/userinfo" target="_blank" rel="noopener">http://localhost:5000/connect/userinfo</a>“,</li>
+<li>scopes_supported : “UserApi”, “offline_access”</li>
+<li>claims_supported</li>
+<li>grant_types_supported：”authorization_code”, “client_credentials”, “refresh_token”, “implicit”</li>
+<li>response_types_supported:  “code”, “token”, “id_token”, “id_token token”, “code id_token”, “code token”,  “code id_token token”</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Id4OpenIdConfiguration.png" alt=""></p>
+<p>同步地可以快速监视一下拿到的doc这个变量：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Id4doc.png" alt=""></p>
+<h4 id="控制台获取access-token"><a href="#控制台获取access-token" class="headerlink" title="控制台获取access_token"></a>控制台获取access_token</h4><p>在拿到id4的文档之后，要访问tokenpoint来获取access token，先关的代码片段如下：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">var</span> tokenResponse <span class="token operator">=</span> <span class="token keyword">await</span> client<span class="token punctuation">.</span><span class="token function">RequestClientCredentialsTokenAsync</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ClientCredentialsTokenRequest</span>
+<span class="token punctuation">{</span>
+  Address <span class="token operator">=</span> disco<span class="token punctuation">.</span>TokenEndpoint<span class="token punctuation">,</span>
+  ClientId <span class="token operator">=</span> <span class="token string">"Chaoqiang.Demo.ClientCredential"</span><span class="token punctuation">,</span>
+  ClientSecret <span class="token operator">=</span> <span class="token string">"chaoqiang123456"</span><span class="token punctuation">,</span>
+  Scope <span class="token operator">=</span> <span class="token string">"UserApi"</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span>tokenResponse<span class="token punctuation">.</span>IsError<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>tokenResponse<span class="token punctuation">.</span>Error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里需要注意的是：控制台配置的ClientId和ClientSecret以及Scope都需要和Id4那边保持一致，这个tokenEndpoint的地址是：<code>http://localhost:5000/connect/token</code>;<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/ClientSecret.png" alt=""></p>
+<p>这里还可以通过Postman来模拟一下获取token的过程，需要传递相关参数：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials_postman.jpg" alt=""></p>
+<p>进一步地，假设这里我们想在控制台通过Auth的客户端模式访问用户信息，同时在Id4和控制台的scope都加上openid,如下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client_scope_error.png" alt=""><br>这时发现 invaild scope报错， 此时这种Credentials的授权方式不代表任何用户，想一下，你拿着一个ClientId 想要访问Openid这是不合理的。</p>
+<h4 id="访问API资源"><a href="#访问API资源" class="headerlink" title="访问API资源"></a>访问API资源</h4><p>这里我们新建一个Net Core API资源，然后还需要在APIResource的Startup中加入Authentication的部分，进行一些改造，这里可以有两种做法：</p>
+<ol>
+<li>第一种是安装这个Nuget package <code>Microsoft.AspNetCore.Authentication.JwtBearer</code>,  注意一下与Net Core的版本兼容。</li>
+</ol>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">ConfigureServices</span><span class="token punctuation">(</span>IServiceCollection services<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  services<span class="token punctuation">.</span><span class="token function">AddControllers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span><span class="token string">"Bearer"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">AddJwtBearer</span><span class="token punctuation">(</span><span class="token string">"Bearer"</span><span class="token punctuation">,</span> options <span class="token operator">=</span><span class="token operator">></span>
+    <span class="token punctuation">{</span>
+      options<span class="token punctuation">.</span>Authority <span class="token operator">=</span> <span class="token string">"http://localhost:5000"</span><span class="token punctuation">;</span>
+      options<span class="token punctuation">.</span>RequireHttpsMetadata <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">;</span>
+      options<span class="token punctuation">.</span>Audience <span class="token operator">=</span> <span class="token string">"UserApi"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Configure</span><span class="token punctuation">(</span>IApplicationBuilder app<span class="token punctuation">,</span> IWebHostEnvironment env<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>env<span class="token punctuation">.</span><span class="token function">IsDevelopment</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    app<span class="token punctuation">.</span><span class="token function">UseDeveloperExceptionPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  app<span class="token punctuation">.</span><span class="token function">UseRouting</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  app<span class="token punctuation">.</span><span class="token function">UseAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  app<span class="token punctuation">.</span><span class="token function">UseAuthorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  app<span class="token punctuation">.</span><span class="token function">UseEndpoints</span><span class="token punctuation">(</span>endpoints <span class="token operator">=</span><span class="token operator">></span>
+  <span class="token punctuation">{</span>
+    endpoints<span class="token punctuation">.</span><span class="token function">MapControllers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>第二种是使用Id4的中间件验证包：<code>IdentityServer4.AccessTokenValidation</code>然后Authentication的配置就变成下面这样：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span><span class="token string">"Bearer"</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddIdentityServerAuthentication</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+  <span class="token punctuation">{</span>
+    options<span class="token punctuation">.</span>Authority <span class="token operator">=</span> <span class="token string">"http://localhost:5000"</span><span class="token punctuation">;</span>
+    options<span class="token punctuation">.</span>RequireHttpsMetadata <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">;</span>
+    options<span class="token punctuation">.</span>ApiName <span class="token operator">=</span> <span class="token string">"UserApi"</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>接着，再增加一个Identity的controller,带上Authorize的标签，用于返回用户信息，如下：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span><span class="token function">Route</span><span class="token punctuation">(</span><span class="token string">"identity"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token punctuation">[</span>ApiController<span class="token punctuation">]</span>
+<span class="token punctuation">[</span>Authorize<span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">IdentityController</span> <span class="token punctuation">:</span> ControllerBase
+<span class="token punctuation">{</span>
+  <span class="token punctuation">[</span>HttpGet<span class="token punctuation">]</span>
+  <span class="token keyword">public</span> IActionResult <span class="token function">Get</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span>
+      <span class="token keyword">from</span> c <span class="token keyword">in</span> User<span class="token punctuation">.</span>Claims <span class="token keyword">select</span> <span class="token keyword">new</span> <span class="token punctuation">{</span>c<span class="token punctuation">.</span>Type<span class="token punctuation">,</span>c<span class="token punctuation">.</span>Value<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>万事具备，现在可以在控制台中去call这个带有认证的API资源了：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials_API_response200.jpg" alt=""><br>当然这个过程，也可以用Postman来模拟一下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials_postman2.jpg" alt=""></p>
+<p>这里我们再梳理一下整个访问的流程和涉及的站点：</p>
+<ul>
+<li>控制台，使用客户端模式</li>
+<li>Id4，鉴权授权中心（5000端口）</li>
+<li>API资源（8888端口）</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials_process.jpg" alt=""></p>
+<p>我们可以通过Fiddler来查看一下  整个访问的过程：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/fiddler_Client_Credentials.png" alt=""><br>还可以将得到的access token去JWT官网解析一下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Client_Credentials_jwt.jpgd" alt=""></p>
+<h4 id="权限控制"><a href="#权限控制" class="headerlink" title="权限控制"></a>权限控制</h4><p>进一步地，我们可以在API的上面增加一些授权策略，例如要求用户的邮箱是qq邮箱还是163邮箱；</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthorization</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"eMailPolicy"</span><span class="token punctuation">,</span>
+  policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder
+  <span class="token punctuation">.</span><span class="token function">RequireAssertion</span><span class="token punctuation">(</span>context <span class="token operator">=</span><span class="token operator">></span>
+  context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">HasClaim</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> <span class="token string">"client_eMail"</span><span class="token punctuation">)</span>
+  <span class="token operator">&amp;&amp;</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span>Claims<span class="token punctuation">.</span><span class="token function">First</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"client_eMail"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Value<span class="token punctuation">.</span><span class="token function">EndsWith</span><span class="token punctuation">(</span><span class="token string">"@163.com"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//Client</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这样的话，与我们传入的Claim中的邮箱要求就不符合了；还要注意的是此处Type是client_eMail，要与Id4中的Claim保持一致；<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/client%20credentials_403.jpg" alt=""></p>
+<p><strong>小结一下</strong>： Client Credentials保护无人客户端并访问被保护资源</p>
+<ul>
+<li>OAuth 2.0 Client Credentials</li>
+<li>客户端应用不代表用户，客户端应用本身就相当于是资源所有者</li>
+<li>通常用于机器对机器的通信</li>
+<li>客户端也需要身份认证的</li>
+</ul>
+<h3 id="OAuth-2-0-Password-Grant"><a href="#OAuth-2-0-Password-Grant" class="headerlink" title="OAuth 2.0 Password Grant"></a>OAuth 2.0 Password Grant</h3><p>这里我们通过Postman快速看一下密码模式的特点：<br>首先，我们在Id4里的Authebntication中进行一些改造，将授权方式改为密码模式；</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddIdentityServer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddDeveloperSigningCredential</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//默认的开发者证书               .AddInMemoryApiResources(PasswordInitConfig.GetApiResources())//API访问授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryClients</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">//客户端</span>
+  <span class="token punctuation">.</span><span class="token function">AddTestUsers</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//添加用户</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>下面我们重点卡看一下相比于客户端模式，密码模式初始化数据上的不一样：</p>
+<ul>
+<li>新增了一个<code>GetUsers</code>, 增加了用户数据这部分；</li>
+<li>在客户端的信息里面，没有cliams，因为就算有也没法传过去，用户数据统一放在user claim里面了；</li>
+<li>在APISource中，新增了Role和email等claim，这是因为在授权策略里面会读取email来判断邮箱类型；</li>
+<li>值得注意的是，此时在用户信息里的claim和之前client里的claim的名字已经不一样了，例如client中是client_eMail，但是User中是eMail;</li>
+<li>另外，虽然不能在Id4的Client加入claims，但是可以在Client的scope可以加入一些Identity信息（用户信息），这样也能获取到，后看将通过实例看一下。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/passwordInitConfig.png" alt=""></li>
+</ul>
+<h4 id="创建WPF客户端"><a href="#创建WPF客户端" class="headerlink" title="创建WPF客户端"></a>创建WPF客户端</h4><p>这里将通过一个WPF客户端使用密码模式来访问Id4和API资源的例子详细剖析各个过程。<br>创建WPF客户端，引用Nuget package: <code>IdentityModel</code><br>大概的布局如下，分为三步，首先获取Access Token，然后根据Access Token请求API资源，最后还可以验证一下请求id4中的Identity资源。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_Layout.jpg" alt=""></p>
+<h4 id="获取Access-Token"><a href="#获取Access-Token" class="headerlink" title="获取Access Token"></a>获取Access Token</h4><p>WPF客户端带着用户密码向Id4请求Access Token:<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_AccessToken.jpg" alt=""></p>
+<p>通过access token解析出来的内容，我们可以对比一下：</p>
+<ul>
+<li>Id4中的APIResource的Scope范围不一样，会导致最终获取到的token中的claim也不一样；</li>
+<li>当WPF使用的Scope是<code>TestApi</code>的时候，发现能获取到用户的eMail和role这两个信息，因为<code>TestApi</code>的APIResource中包含了这些Claim信息；</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_APIResource_Scope.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_APIResource_Scope2.jpg" alt=""></p>
+<h4 id="访问API资源-1"><a href="#访问API资源-1" class="headerlink" title="访问API资源"></a>访问API资源</h4><p>这里我们也对比一下，访问API资源的Identity，不同的API资源Scope，最终在被访问的API中拿到的Claim也是不一样的。例如这里的eMail,role, title等信息都是需要在API资源的Scope中增加的。<br>基于此，我们也可以对API进行一些授权策略的定制化，这里就不展开了，与上述客户端模式时的授权策略类似；<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_APIResource_Claims.jpg" alt=""></p>
+<h4 id="获取Identity资源"><a href="#获取Identity资源" class="headerlink" title="获取Identity资源"></a>获取Identity资源</h4><p>除了获取API Source中的资源，还可以获取Identity的资源，也就是用户的信息，这个同样可以通过更改客户端的scope来进行获取；</p>
+<p>我们需要先添加Idnetity资源，然后才能扩大WPF客户端请求的scope，否则在请求access token时就会报<code>invalid_token</code>这样的错误：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_InvalidScope_Identity.jpg" alt=""></p>
+<p>增加IdentityResource，在Id4的Startup和InitConfig中进行一些改造：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/IdnetityResourceInit.jpg" alt=""></p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 密码模式</span>
+services<span class="token punctuation">.</span><span class="token function">AddIdentityServer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddDeveloperSigningCredential</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//默认的开发者证书</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryIdentityResources</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetIdentityResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//添加Identity资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryApiResources</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetApiResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//API访问授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryClients</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">//客户端</span>
+  <span class="token punctuation">.</span><span class="token function">AddTestUsers</span><span class="token punctuation">(</span>PasswordInitConfig<span class="token punctuation">.</span><span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//添加用户</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>对应的在WPF客户端中，可以扩大scope来请求access token了：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/WPF_Identity_AccessToken.jpg" alt=""></p>
+<p>然后拿着请求到的token去访问Identity资源，即用户信息：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token keyword">void</span> <span class="token function">RequestIdentityResource_ButtonClick</span><span class="token punctuation">(</span><span class="token keyword">object</span> sender<span class="token punctuation">,</span> RoutedEventArgs e<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">// call Identity Resource from Identity Server</span>
+  <span class="token keyword">var</span> apiClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HttpClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  apiClient<span class="token punctuation">.</span><span class="token function">SetBearerToken</span><span class="token punctuation">(</span>_accessToken<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">var</span> response <span class="token operator">=</span> <span class="token keyword">await</span> apiClient<span class="token punctuation">.</span><span class="token function">GetAsync</span><span class="token punctuation">(</span>_disco<span class="token punctuation">.</span>UserInfoEndpoint<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>response<span class="token punctuation">.</span>IsSuccessStatusCode<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    MessageBox<span class="token punctuation">.</span><span class="token function">Show</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>StatusCode<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> content <span class="token operator">=</span> <span class="token keyword">await</span> response<span class="token punctuation">.</span>Content<span class="token punctuation">.</span><span class="token function">ReadAsStringAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    IdentityResponseTextBlock<span class="token punctuation">.</span>Text <span class="token operator">=</span> content<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>验证一下拿到的用户信息：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/wpf_identity_scopes.png" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/wpf_identity_content.jpg" alt=""></p>
+<p><strong>小结</strong>：OAuth 2.0 Password Grant，用户需要把密码提供给第三方，资源所有者的密码凭证（例如用户名和密码）直接被用来请求Access Token，通常用于遗留的应用，资源所有者和客户端应用之间必须高度信任，其它授权方式不可用的时候才使用，尽量不用。</p>
+<h3 id="Implicit-Flow-隐藏式"><a href="#Implicit-Flow-隐藏式" class="headerlink" title="Implicit Flow 隐藏式"></a>Implicit Flow 隐藏式</h3><ul>
+<li>浏览器模式—允许授权给浏览器</li>
+<li>用户访问A—没有token—A提供地址跳转B登录</li>
+<li>–输入账号密码—授权—调回A的地址(url带token)–访问A时带上token</li>
+<li><strong>保护了密码—暴露了token</strong></li>
+</ul>
+<p>下面开始配置，Id4中的Authentication进行改造：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 隐藏模式</span>
+services<span class="token punctuation">.</span><span class="token function">AddIdentityServer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddDeveloperSigningCredential</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//默认的开发者证书</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryApiResources</span><span class="token punctuation">(</span>ImplicitInitConfig<span class="token punctuation">.</span><span class="token function">GetApiResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">//API访问授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryClients</span><span class="token punctuation">(</span>ImplicitInitConfig<span class="token punctuation">.</span><span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//客户端</span>
+  <span class="token punctuation">.</span><span class="token function">AddTestUsers</span><span class="token punctuation">(</span>ImplicitInitConfig<span class="token punctuation">.</span><span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//添加用户</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Id4中客户端更改客户端授权方式：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> IEnumerable<span class="token operator">&lt;</span>Client<span class="token operator">></span> <span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">new</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">new</span> <span class="token class-name">Client</span>
+    <span class="token punctuation">{</span>
+      ClientId <span class="token operator">=</span> <span class="token string">"Chaoqiang.Demo.ImplicitGrant"</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//客户端惟一标识</span>
+      ClientName<span class="token operator">=</span><span class="token string">"ApiClient for Implicit"</span><span class="token punctuation">,</span>
+      ClientSecrets <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span> <span class="token keyword">new</span> <span class="token class-name">Secret</span><span class="token punctuation">(</span><span class="token string">"chaoqiang123456"</span><span class="token punctuation">.</span><span class="token function">Sha256</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      AllowedGrantTypes <span class="token operator">=</span> GrantTypes<span class="token punctuation">.</span>Implicit<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//隐藏模式</span>
+      RedirectUris<span class="token operator">=</span><span class="token punctuation">{</span><span class="token string">"http://localhost:8888/Identity"</span> <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//可以多个，根据请求来的转发</span>
+      AllowedScopes <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span> <span class="token string">"UserApi"</span><span class="token punctuation">,</span><span class="token string">"TestApi"</span> <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//允许访问的资源</span>
+      AllowAccessTokensViaBrowser<span class="token operator">=</span><span class="token keyword">true</span><span class="token comment" spellcheck="true">//允许将token通过浏览器传递</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个时候请求token的地址是下面这种格式的:<br>隐藏模式：用户—应用A—腾讯授权中心<br><a href="http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.ImplicitGrant&amp;redirect_uri=http://localhost:8888/Identity/identityToken&amp;response_type=token&amp;scope=UserApi" target="_blank" rel="noopener">http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.ImplicitGrant&amp;redirect_uri=http://localhost:8888/Identity/identityToken&amp;response_type=token&amp;scope=UserApi</a><br>用户访问应用A—需要token—跳转到授权中心—应用A提供地址—然后用户向腾讯授权中心输入账号密码<br><a href="http://localhost:8888/Identity/identityToken#access_token=eyJhbGciOiJSUzI1NiIsImtpZCI6InQtaG5LSXRlN1ZLUktrZXZNNzhPUlEiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE1OTIxMDY3NDUsImV4cCI6MTU5MjExMDM0NSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiVXNlckFwaSIsImNsaWVudF9pZCI6IkNoYW9xaWFuZy5EZW1vLkltcGxpY2l0R3JhbnQiLCJzdWIiOiIwIiwiYXV0aF90aW1lIjoxNTkyMTAzNTAwLCJpZHAiOiJsb2NhbCIsInJvbGUiOiJBZG1pbiIsImVNYWlsIjoiOTI1NjEwMDY5QHFxLmNvbSIsInNjb3BlIjpbIlVzZXJBcGkiXSwiYW1yIjpbInB3ZCJdfQ.W6zve3WoQc0Zu6Hz4Cs2FeH8I-oq0_pjSLBkifigbt5AKhUDXkGge0juqBbbRDvfeq99ZzHENEnro98lNULt1TvIPzZauzPokTv8bSnPl6GsAi9ctIy17eWTofdAsmGiUhoLxmnmA6umA5ejCxtqFSg_kAZDK6Yvf_KneAyH6mc_ZPd_97KWHTLE4u63mD2jL27xSroN7s6Gp8HPZcmkyF4GZbrcgUSCZiryIBl7oHKzpPebNDygV5m-BpJmnAQpaj8GfLJqj5eQKmtVbtrPO2bf8y-XFUSYss5vIkxYNcMDuUE1wOvjMDBahN3YzXtEcoIOjGRXH6t2JoNSUnLXsg&amp;token_type=Bearer&amp;expires_in=3600&amp;scope=UserApi" target="_blank" rel="noopener">http://localhost:8888/Identity/identityToken#access_token=eyJhbGciOiJSUzI1NiIsImtpZCI6InQtaG5LSXRlN1ZLUktrZXZNNzhPUlEiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE1OTIxMDY3NDUsImV4cCI6MTU5MjExMDM0NSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiVXNlckFwaSIsImNsaWVudF9pZCI6IkNoYW9xaWFuZy5EZW1vLkltcGxpY2l0R3JhbnQiLCJzdWIiOiIwIiwiYXV0aF90aW1lIjoxNTkyMTAzNTAwLCJpZHAiOiJsb2NhbCIsInJvbGUiOiJBZG1pbiIsImVNYWlsIjoiOTI1NjEwMDY5QHFxLmNvbSIsInNjb3BlIjpbIlVzZXJBcGkiXSwiYW1yIjpbInB3ZCJdfQ.W6zve3WoQc0Zu6Hz4Cs2FeH8I-oq0_pjSLBkifigbt5AKhUDXkGge0juqBbbRDvfeq99ZzHENEnro98lNULt1TvIPzZauzPokTv8bSnPl6GsAi9ctIy17eWTofdAsmGiUhoLxmnmA6umA5ejCxtqFSg_kAZDK6Yvf_KneAyH6mc_ZPd_97KWHTLE4u63mD2jL27xSroN7s6Gp8HPZcmkyF4GZbrcgUSCZiryIBl7oHKzpPebNDygV5m-BpJmnAQpaj8GfLJqj5eQKmtVbtrPO2bf8y-XFUSYss5vIkxYNcMDuUE1wOvjMDBahN3YzXtEcoIOjGRXH6t2JoNSUnLXsg&amp;token_type=Bearer&amp;expires_in=3600&amp;scope=UserApi</a><br>到这里可以获取到token</p>
+<p>紧接着，拿到token之后，我们就可以去访问identity这个带头认证的方法了，这里我们用Postman来模拟一下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/implicit_token.jpg" alt=""></p>
+<p>Implicit Flow的特点：</p>
+<ul>
+<li>用于“公共”客户端  例如angular单页应用程序</li>
+<li>最好是客户端应用可以直接从浏览器访问资源</li>
+<li>没有显式的客户端身份认证</li>
+<li>token直接就暴露在浏览器地址上</li>
+</ul>
+<p>这里我们可以通过一个使用Implicit Flow保护Angular (SPA)客户端的实例来演示这个详细的过程，主要涉及访问被保护的资源，刷新Access Token。<br><strong>这里先挖个坑，后面结合openid再填！</strong></p>
+<h3 id="Authorization-Code-Flow授权码模式"><a href="#Authorization-Code-Flow授权码模式" class="headerlink" title="Authorization Code Flow授权码模式"></a>Authorization Code Flow授权码模式</h3><p>先授权码，再Token，保护密码-保护token；<br>拿到授权码之后就在后端去访问token了；<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/AuthCode.png" alt=""></p>
+<p>同样的，我们对Id4进行一些改造：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 授权码模式</span>
+  services<span class="token punctuation">.</span><span class="token function">AddIdentityServer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddDeveloperSigningCredential</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//默认的开发者证书 </span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryApiResources</span><span class="token punctuation">(</span>CodeInitConfig<span class="token punctuation">.</span><span class="token function">GetApiResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">//API访问授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryClients</span><span class="token punctuation">(</span>CodeInitConfig<span class="token punctuation">.</span><span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//客户端</span>
+  <span class="token punctuation">.</span><span class="token function">AddTestUsers</span><span class="token punctuation">(</span>CodeInitConfig<span class="token punctuation">.</span><span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//添加用户</span>
+ <span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>第一步，先获取授权码Code</strong><br>授权码模式：用户—应用A—腾讯授权中心<br><a href="http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.AuthorizationCode&amp;redirect_uri=http://localhost:8888/Identity/IdentityCode&amp;response_type=code&amp;scope=UserApi" target="_blank" rel="noopener">http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.AuthorizationCode&amp;redirect_uri=http://localhost:8888/Identity/IdentityCode&amp;response_type=code&amp;scope=UserApi</a><br>用户访问应用A—需要token—跳转到授权中心—应用A提供地址—然后用户向腾讯授权中心输入账号密码<br>–返回Code–拿着Code+clientpassword通过后端去获取token<br><a href="http://localhost:8888/Identity/IdentityCode?code=TS4O787i5FHLklTqVoINwB6FZCqXym9X4KmMLOURSM8&amp;scope=UserApi" target="_blank" rel="noopener">http://localhost:8888/Identity/IdentityCode?code=TS4O787i5FHLklTqVoINwB6FZCqXym9X4KmMLOURSM8&amp;scope=UserApi</a><br>至此，我们就拿到了Code。</p>
+<p><strong>第二步，过后端去获取token</strong><br>这个过程我们通过Postman来模拟一下：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/authorization-code_token.jpg" alt=""></p>
+<p><strong>第三步，拿着token去访问带有验证的API方法</strong><br>拿到access token之后我们就可以”为所欲为“了，这时候就可以去访问API带有验证的法法了，这里的过程就不再赘述了，与上面相似。</p>
+<h2 id="OIDC-OpenId-Connect"><a href="#OIDC-OpenId-Connect" class="headerlink" title="OIDC OpenId Connect"></a>OIDC OpenId Connect</h2><p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OpenIDConnectFlows.jpg" alt=""><br>OIDC（OpenID Connect）是在OAuth2上构建了一个身份层，是一个基于OAuth2协议的身份认证标准协议。OAuth2授权协议—解决了N多个快递员如何进小区的问题Access_Token—门卫不知道快递员是谁—没有用户信息(可以有，但是不关心)<br>OAuth—–&gt;Access_Token<br>OIDC—–&gt;Id_Token<br>一次请求，可以拿到2个token</p>
+<ul>
+<li>Access_Token &amp;&amp; Id_Token</li>
+<li>OpenID Connect— 2个加起来(Access Token + ID Token)</li>
+<li>Openid浏览器返回—混合式</li>
+</ul>
+<p>客户端-密码式不能玩，OpenID是基于浏览器的，所以oidc是适合隐藏式和授权码模式的。也就是说Id_token的获取就是多一个返回信息，因为只能通过url回调。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Client_Types.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuthVSOpenId.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/OAuthVSOpenId2.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/AllEndpoints.jpg" alt=""></p>
+<h3 id="Hybrid-混合模式"><a href="#Hybrid-混合模式" class="headerlink" title="Hybrid 混合模式"></a>Hybrid 混合模式</h3><p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/ThreeFlows.jpg" alt=""><br>先从Id4的Startup配置开始，会发现这里新增加了<code>IdentityResource</code>,这在上面也提到过了，这里再单独拿出来说一下：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 混合模式</span>
+services<span class="token punctuation">.</span><span class="token function">AddIdentityServer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddDeveloperSigningCredential</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//默认的开发者证书 </span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryIdentityResources</span><span class="token punctuation">(</span>HybridInitConfig<span class="token punctuation">.</span><span class="token function">GetIdentityResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//身份信息授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryApiResources</span><span class="token punctuation">(</span>HybridInitConfig<span class="token punctuation">.</span><span class="token function">GetApiResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">//API访问授权资源</span>
+  <span class="token punctuation">.</span><span class="token function">AddInMemoryClients</span><span class="token punctuation">(</span>HybridInitConfig<span class="token punctuation">.</span><span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//客户端</span>
+  <span class="token punctuation">.</span><span class="token function">AddTestUsers</span><span class="token punctuation">(</span>HybridInitConfig<span class="token punctuation">.</span><span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//添加用户</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>我们重点关注一下GetIdentityResources和GetClients这里面的变化：<br>可以放入自定义的用户信息，也有一些定义好的用户信息scope。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token comment" spellcheck="true">/// &lt;summary></span>
+<span class="token comment" spellcheck="true">/// 用户信息，能返回哪些用户信息</span>
+<span class="token comment" spellcheck="true">/// &lt;/summary></span>
+<span class="token comment" spellcheck="true">/// &lt;returns>&lt;/returns></span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> IEnumerable<span class="token operator">&lt;</span>IdentityResource<span class="token operator">></span> <span class="token function">GetIdentityResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">IdentityResource</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">new</span> <span class="token class-name">IdentityResources<span class="token punctuation">.</span>OpenId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">new</span> <span class="token class-name">IdentityResources<span class="token punctuation">.</span>Profile</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//一堆默认属性</span>
+    <span class="token keyword">new</span> <span class="token class-name">IdentityResource</span><span class="token punctuation">(</span>
+      <span class="token string">"CustomIdentityResource"</span><span class="token punctuation">,</span>
+      <span class="token string">"This is Custom Model"</span><span class="token punctuation">,</span>
+      <span class="token keyword">new</span> <span class="token class-name">List</span><span class="token operator">&lt;</span><span class="token keyword">string</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span> <span class="token string">"phonemodel"</span><span class="token punctuation">,</span><span class="token string">"phoneprise"</span><span class="token punctuation">,</span> <span class="token string">"eMail"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token comment" spellcheck="true">//自定义Id资源，植入claim</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当然这些资源都需要在用户的Claim里面加进去，后面才能读取到：<br>可以看到用户的Claim里面加了很多信息，例如Role，NickName，Name，prog，phonemodel等。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> List<span class="token operator">&lt;</span>TestUser<span class="token operator">></span> <span class="token function">GetUsers</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">List</span><span class="token operator">&lt;</span>TestUser<span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">new</span> <span class="token class-name">TestUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      Username<span class="token operator">=</span><span class="token string">"chaoqiang"</span><span class="token punctuation">,</span>
+      Password<span class="token operator">=</span><span class="token string">"123456"</span><span class="token punctuation">,</span>
+      SubjectId<span class="token operator">=</span><span class="token string">"0"</span><span class="token punctuation">,</span>
+
+      Claims<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">List</span><span class="token operator">&lt;</span>Claim<span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>IdentityModel<span class="token punctuation">.</span>JwtClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">,</span><span class="token string">"Admin"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>IdentityModel<span class="token punctuation">.</span>JwtClaimTypes<span class="token punctuation">.</span>NickName<span class="token punctuation">,</span><span class="token string">"Chaoqiang"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span><span class="token string">"apiUser"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"eMail"</span><span class="token punctuation">,</span><span class="token string">"925610069@qq.com"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"prog"</span><span class="token punctuation">,</span><span class="token string">"正式项目"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"phonemodel"</span><span class="token punctuation">,</span><span class="token string">"huawei"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span><span class="token string">"phoneprise"</span><span class="token punctuation">,</span><span class="token string">"5000元"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>还有一个是Client上的一些变化：需要把这些scope给暴露出去，客户端读取Id-Token时才能获取到。openid是必须加入的scope。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> IEnumerable<span class="token operator">&lt;</span>Client<span class="token operator">></span> <span class="token function">GetClients</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">new</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">new</span> <span class="token class-name">Client</span>
+    <span class="token punctuation">{</span>
+      AlwaysIncludeUserClaimsInIdToken<span class="token operator">=</span><span class="token keyword">true</span><span class="token punctuation">,</span>
+      AllowOfflineAccess <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+
+      ClientId <span class="token operator">=</span> <span class="token string">"Chaoqiang.Demo.Hybrid"</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//客户端惟一标识</span>
+      ClientName<span class="token operator">=</span><span class="token string">"ApiClient for HyBrid"</span><span class="token punctuation">,</span>
+      ClientSecrets <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span> <span class="token keyword">new</span> <span class="token class-name">Secret</span><span class="token punctuation">(</span><span class="token string">"chaoqiang123456"</span><span class="token punctuation">.</span><span class="token function">Sha256</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      AccessTokenLifetime<span class="token operator">=</span><span class="token number">3600</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//默认1小时</span>
+      AllowedGrantTypes <span class="token operator">=</span> GrantTypes<span class="token punctuation">.</span>Hybrid<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//混合模式</span>
+      RedirectUris<span class="token operator">=</span><span class="token punctuation">{</span><span class="token string">"http://localhost:5726/Ids4/IndexCodeToken"</span> <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//可以多个</span>
+      AllowedScopes <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>
+        <span class="token string">"UserApi"</span><span class="token punctuation">,</span>
+        <span class="token string">"TestApi"</span><span class="token punctuation">,</span><span class="token comment" spellcheck="true">//资源范围</span>
+        IdentityServerConstants<span class="token punctuation">.</span>StandardScopes<span class="token punctuation">.</span>OpenId<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//Ids4：获取Id_token，必需加入"openid"</span>
+        IdentityServerConstants<span class="token punctuation">.</span>StandardScopes<span class="token punctuation">.</span>Profile<span class="token punctuation">,</span><span class="token comment" spellcheck="true">//用户信息范围</span>
+        <span class="token string">"CustomIdentityResource"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+      AllowAccessTokensViaBrowser<span class="token operator">=</span><span class="token keyword">true</span><span class="token comment" spellcheck="true">//允许将token通过浏览器传递</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个 时候请求的参数和之前有点不太一样了：</p>
+<ul>
+<li>response_type  返回token还是id_token还是都返回，scope范围也变大了；</li>
+</ul>
+<p><a href="http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.Hybrid&amp;redirect_uri=http://localhost:8888/Identity/IdentityCodeToken&amp;response_type=code%20token%20id_token&amp;scope=UserApi%20openid%20CustomIdentityResource&amp;response_model=fragment&amp;nonce=12345" target="_blank" rel="noopener">http://localhost:5000/connect/authorize?client_id=Chaoqiang.Demo.Hybrid&amp;redirect_uri=http://localhost:8888/Identity/IdentityCodeToken&amp;response_type=code%20token%20id_token&amp;scope=UserApi%20openid%20CustomIdentityResource&amp;response_model=fragment&amp;nonce=12345</a></p>
+<p>拿着这个地址直接去请求就可以获取相应的response_type,会让你输入用户密码：<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Hybrid_Allow_Page.jpg" alt=""></p>
+<p>返回的这个结果里面有几个token，可以拿来解析一下：</p>
+<p><a href="http://localhost:8888/Identity/IdentityCodeToken#**code**=Hvp8az0al1s4fRi--XoLEC8rPrcHubHaeJ9OET3z_l4&amp;**id_token**=eyJhbGciOiJSUzI1NiIsImtpZCI6InQtaG5LSXRlN1ZLUktrZXZNNzhPUlEiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE1OTIxMTY3NTEsImV4cCI6MTU5MjExNzA1MSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiQ2hhb3FpYW5nLkRlbW8uSHlicmlkIiwibm9uY2UiOiIxMjM0NSIsImlhdCI6MTU5MjExNjc1MSwiYXRfaGFzaCI6IkhheEpHZjNWRi1oUW9CQkRIT2xqLVEiLCJjX2hhc2giOiJYQ2RzX0JJZ1V2TTBXUk01ZkgtaGR3Iiwic2lkIjoidXYzVERUa3oyLUdsSWhlR0cyaG9pdyIsInN1YiI6IjAiLCJhdXRoX3RpbWUiOjE1OTIxMTE1MDUsImlkcCI6ImxvY2FsIiwiZU1haWwiOiI5MjU2MTAwNjlAcXEuY29tIiwicGhvbmVtb2RlbCI6Imh1YXdlaSIsInBob25lcHJpc2UiOiI1MDAw5YWDIiwiYW1yIjpbInB3ZCJdfQ.AB0dxV3GHweMP-A4TVzqK7x_2zeEcxmjcC8NBYXf9hcPGMMq5ea2i0sgU1JiGrWIs_w_jPfFb5UUPFasfa0RhKdgF9LrkJI7zL3whYdUWCVOlsVvno2zLw7B_rrn-lUOVrdHbMXi9SaXiawct9VaLN7cx-KuvbWm18VjNwO90-bcJYdJ1L3umM_802CtjatmS61Jm6RHSgxFAqgmbRLSO4fEMu52roaFw2uXr_vr2YX5Hte1HW3g2pDNJ0K_Yc54tI3LzakxMMq88bblnuXJcVZOU0MUtxTo8Airs_2nyLdVAtxDZ8Sp0FIGDnzVL8P0KwdXcESCuh3y2_LHbI1yxQ&amp;" target="_blank" rel="noopener">http://localhost:8888/Identity/IdentityCodeToken#**code**=Hvp8az0al1s4fRi--XoLEC8rPrcHubHaeJ9OET3z_l4&amp;**id_token**=eyJhbGciOiJSUzI1NiIsImtpZCI6InQtaG5LSXRlN1ZLUktrZXZNNzhPUlEiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE1OTIxMTY3NTEsImV4cCI6MTU5MjExNzA1MSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiQ2hhb3FpYW5nLkRlbW8uSHlicmlkIiwibm9uY2UiOiIxMjM0NSIsImlhdCI6MTU5MjExNjc1MSwiYXRfaGFzaCI6IkhheEpHZjNWRi1oUW9CQkRIT2xqLVEiLCJjX2hhc2giOiJYQ2RzX0JJZ1V2TTBXUk01ZkgtaGR3Iiwic2lkIjoidXYzVERUa3oyLUdsSWhlR0cyaG9pdyIsInN1YiI6IjAiLCJhdXRoX3RpbWUiOjE1OTIxMTE1MDUsImlkcCI6ImxvY2FsIiwiZU1haWwiOiI5MjU2MTAwNjlAcXEuY29tIiwicGhvbmVtb2RlbCI6Imh1YXdlaSIsInBob25lcHJpc2UiOiI1MDAw5YWDIiwiYW1yIjpbInB3ZCJdfQ.AB0dxV3GHweMP-A4TVzqK7x_2zeEcxmjcC8NBYXf9hcPGMMq5ea2i0sgU1JiGrWIs_w_jPfFb5UUPFasfa0RhKdgF9LrkJI7zL3whYdUWCVOlsVvno2zLw7B_rrn-lUOVrdHbMXi9SaXiawct9VaLN7cx-KuvbWm18VjNwO90-bcJYdJ1L3umM_802CtjatmS61Jm6RHSgxFAqgmbRLSO4fEMu52roaFw2uXr_vr2YX5Hte1HW3g2pDNJ0K_Yc54tI3LzakxMMq88bblnuXJcVZOU0MUtxTo8Airs_2nyLdVAtxDZ8Sp0FIGDnzVL8P0KwdXcESCuh3y2_LHbI1yxQ&amp;</a> <strong>access_token</strong>=eyJhbGciOiJSUzI1NiIsImtpZCI6InQtaG5LSXRlN1ZLUktrZXZNNzhPUlEiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE1OTIxMTY3NTEsImV4cCI6MTU5MjEyMDM1MSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiVXNlckFwaSIsImNsaWVudF9pZCI6IkNoYW9xaWFuZy5EZW1vLkh5YnJpZCIsInN1YiI6IjAiLCJhdXRoX3RpbWUiOjE1OTIxMTE1MDUsImlkcCI6ImxvY2FsIiwicm9sZSI6IkFkbWluIiwiZU1haWwiOiI5MjU2MTAwNjlAcXEuY29tIiwic2NvcGUiOlsib3BlbmlkIiwiQ3VzdG9tSWRlbnRpdHlSZXNvdXJjZSIsIlVzZXJBcGkiXSwiYW1yIjpbInB3ZCJdfQ.MslmyGlDkVRwkG3XE1DGnXerUUsGhVb0f1KyOU3LU7lSv6mM5kj8rDh84upDBxEeIcQ3JGSl9Kd5ZgrWB5lV8OsKEteY3YUciFMAZ1L_gvfLhWKJeiPe669-40_JMSxmwX_6RWdwCURvqQ4bUeaGrYXzhGcnmkAAFO1MjWBEYFyMnIDSc5xuuqlpXRRppLrylWlHHoAY6oQ2ya0q7GyUdmCA5ITAQxOkxQWzgpDidvSHttX2QBbVCcKXAGnc-gKDuecixU-S1aGT6GC1nM1aREFQJcm9nbazenB25uOIl7XeAd81xpzz4BEz0SiRDHBU7WFW6DJrdB-GHtGljYScbg&amp;<strong>token_type</strong>=Bearer&amp;<strong>expires_in</strong>=3600&amp;<strong>scope</strong>=openid%20CustomIdentityResource%20UserApi&amp;<strong>session_state</strong>=_bKodowTCym88ixEUSrVjvykFZFMAFPVtBgiAI9xsw4.oGtn1UvHY5iEAcBoPB56GA</p>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Hybrid_IdToken.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Hybrid_AccessToken.jpg" alt=""></p>
+<p>与之前的类似，拿着access token可以访问带有验证的API的方法；<br>对于id_token的用法，我们可以用来获取用户信息，主要用于单点登录，我们会把id_token往cookie里面塞，每次请求的时候带上。那么后端就可以解析这个id_token，然后获得用户信息。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span>HttpGet<span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">Get</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">//解析id_token</span>
+  <span class="token keyword">string</span> id_token <span class="token operator">=</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>Request<span class="token punctuation">.</span>Cookies<span class="token punctuation">[</span><span class="token string">"id_token"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> token_parts <span class="token operator">=</span> id_token<span class="token punctuation">.</span><span class="token function">Split</span><span class="token punctuation">(</span><span class="token string">'.'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> header <span class="token operator">=</span> Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetString</span><span class="token punctuation">(</span>Base64Url<span class="token punctuation">.</span><span class="token function">Decode</span><span class="token punctuation">(</span>token_parts<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> claims <span class="token operator">=</span> Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetString</span><span class="token punctuation">(</span>Base64Url<span class="token punctuation">.</span><span class="token function">Decode</span><span class="token punctuation">(</span>token_parts<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> sign <span class="token operator">=</span> Encoding<span class="token punctuation">.</span>UTF8<span class="token punctuation">.</span><span class="token function">GetString</span><span class="token punctuation">(</span>Base64Url<span class="token punctuation">.</span><span class="token function">Decode</span><span class="token punctuation">(</span>token_parts<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>header<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>claims<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>sign<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span>
+    <span class="token keyword">from</span> c <span class="token keyword">in</span> User<span class="token punctuation">.</span>Claims <span class="token keyword">select</span> <span class="token keyword">new</span> <span class="token punctuation">{</span>c<span class="token punctuation">.</span>Type<span class="token punctuation">,</span>c<span class="token punctuation">.</span>Value<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里我们用postman来模拟，在cookie中加上id_token，然后访问时读取id_token中的内容:<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/Hybrid_IdToken_usage.jpg" alt=""></p>
+<p>总结一下：混合模式一共有如下三种response的格式：</p>
+<ul>
+<li>response_type=code id_token</li>
+<li>response_type=code token</li>
+<li>response_type=code id_token token</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/codeAndid_token.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/codeAndtoken.jpg" alt=""><br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/IdentityServer4/codeAndid_tokenAndtoken.jpg" alt=""></p>
+<p>至此，我们把几种模式都看了一遍，基本上对于OAuth和OpenId的理解也算是入门了，后面有时间来到时候考虑做几个基于OpenId配置的实例，还有将内存这种方式变为数据库存储的方式，争取把坑填上。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com" rel="external nofollow noreferrer">Chaoqiang</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com/2020/06/06/netcore-authentication-authorization3/">https://www.zhengchaoqiang.com/2020/06/06/netcore-authentication-authorization3/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="https://www.zhengchaoqiang.com" target="_blank">Chaoqiang</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/Net-Core/">
+                                    <span class="chip bg-color">Net Core</span>
+                                </a>
+                            
+                                <a href="/tags/IdentityServer4/">
+                                    <span class="chip bg-color">IdentityServer4</span>
+                                </a>
+                            
+                                <a href="/tags/OAuth-2-0/">
+                                    <span class="chip bg-color">OAuth 2.0</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你要请我吃糖嘛!</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechatpay.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("/medias/comment_bg.png") 100% 100% no-repeat;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #4cbf30;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="vcomments" class="card-content" style="display: grid">
+    </div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'n7QWLgVufdyFqbDlUDEznVhx-gzGzoHsz',
+        appKey: 'YGPdAIijkOPzqgi0LlHI52ex',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: 'just go go'
+    });
+</script>
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2020/06/24/docker-crash-tutorial/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Docker-Crash-Tutorial">
+                        
+                        <span class="card-title">Docker-Crash-Tutorial</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            主要内容
+Docker  VS  VirtualMachine
+centOS7下Docker基本操作
+Asp.Net Core+Docker
+Docker部署集群负载均衡
+Docker-compose docker-machine dock
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-06-24
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Docker-Crash-Tutorial/" class="post-category">
+                                    Docker Crash Tutorial
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Docker/">
+                        <span class="chip bg-color">Docker</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/05/29/netcore-authentication-authorization2/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Netcore认证授权与IdentityServer4（2）JWT">
+                        
+                        <span class="card-title">Netcore认证授权与IdentityServer4（2）JWT</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            主要概要这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：
+
+鉴权授权流程变化
+源码解读鉴权
+源码解读多授权策略
+JWT和Identity
+
+
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-29
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                    .Net Core Learning Series
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Net-Core/">
+                        <span class="chip bg-color">Net Core</span>
+                    </a>
+                    
+                    <a href="/tags/JWT/">
+                        <span class="chip bg-color">JWT</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: chaoqiang&#39;s Blog<br />'
+            + '文章作者: chaoqiang<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            <span>
+                <div>
+                    <span style="color:#ffffff;">Copyright&copy; 2020 chaoqiang. All Rights Reserved</span>
+                </div>
+                
+                <div style="width:500px;margin:0 auto; padding:0px 0;">
+                    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050702010849" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                        <img src="https://blog-icp-1257411902.cos.ap-shanghai.myqcloud.com/icp.png" style="float:left;"/>
+                        <span style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;">苏公网安备 32050702010849号 苏ICP备20017637号</span>
+                    </a>
+                    <!-- <span style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;"> 苏ICP备20017637号</span> -->
+                </div>
+            </span>
+            <span id="sitetime"></span>
+        </div>
+
+    
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已勉强运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+
+
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" color="0,0,255"
+        pointColor="0,0,255" opacity='0.7'
+        zIndex="-1" count="99"
+        src="/libs/background/canvas-nest.js"></script>
+    
+
+    
+
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+     <!-- Chaoqiang shw2018 add 2019.08.28 -->
+     <script type="text/javascript">
+        var OriginTitile = document.title,
+            st;
+        document.addEventListener("visibilitychange", function () {
+            document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                    document.title = OriginTitile
+                }, 3e3))
+        })
+    </script>
+
+    <!-- 鼠标点击烟花爆炸效果  Chaoqiang shw2018 add 2019.09.09 -->
+    
+        <canvas class="fireworks" style="position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+        <script type="text/javascript" src="/js/fireworks.js"></script>
+    
+
+    <!-- 背景雪花飘落特效Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 鼠标点击文字特效 Chaoqiang shw2018 add 2019.09.10-->
+    
+        <script src="/js/wenzi.js" type="text/javascript"></script>
+    
+
+    <!-- 背景雪花飘落特效 Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 在线聊天工具  Chaoqiang shw2018 add 2019.09.11 -->
+    
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":200},"mobile":{"show":false},"react":{"opacity":0.7}});</script><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

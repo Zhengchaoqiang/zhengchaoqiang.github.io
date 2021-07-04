@@ -1,0 +1,1569 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="关于, Bosch SEU chaoqiang Mechanics Eletronics 超强 micro-service Intelligent-Manufacturing MES">
+    <meta name="description" content="关于 | chaoqiang&#39;s Blog">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>关于 | chaoqiang&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">chaoqiang's Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/AV" class="waves-effect waves-light">
+
+      
+      <i class="fas fa-list" style="zoom: 0.6;"></i>
+      
+      <span>Medias</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/Music">
+          
+          <i class="fas fa-music" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Musics</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Movie">
+          
+          <i class="fas fa-film" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Movies</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Book">
+          
+          <i class="fas fa-book" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Books</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/AV">
+          
+          <i class="fas fa-image" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Galleries</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">chaoqiang's Blog</div>
+        <div class="logo-desc">
+            
+            博世互联工业 | 智能制造 | 微服务架构 | 东南大学 | 机械电子工程
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa-fw fas fa-list"></i>
+			
+			Medias
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>   
+				
+                  <a href="/Music " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-music" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Musics</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Movie " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-film" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Movies</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Book " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-book" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Books</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/AV " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-image" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Galleries</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/Zhengchaoqiang" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/Zhengchaoqiang" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    <style type="text/css">
+    /* don't remove. */
+    .about-cover {
+        height: 75vh;
+    }
+</style>
+
+<div class="bg-cover pd-header about-cover">
+    <div class="container">
+    <div class="row">
+    <div class="col s10 offset-s1 m8 offset-m2 l8 offset-l2">
+        <div class="brand">
+            <div class="title center-align">
+                
+                Stay hungry. Stay Foolish.
+                
+            </div>
+
+            <div class="description center-align">
+                
+                <span id="subtitle"></span>
+                <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+                <script>
+                    var typed = new Typed("#subtitle", {
+                        strings: ['从来没有真正的绝境, 只有心灵的迷途。','Never really desperate, only the lost of the soul.'],
+                        startDelay: 300,
+                        typeSpeed: 100,
+                        loop: true,
+                        backSpeed: 50,
+                        showCursor: true
+                    });
+                </script>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // 每天切换 banner 图.  Switch banner image every day.
+    $('.bg-cover').css('background-image', 'url(/medias/banner/' + new Date().getDay() + '.jpg)');
+</script>
+
+
+    </div>
+</div>
+
+<main class="content">
+
+    <div id="aboutme" class="container about-container">
+        <div class="card">
+            <div class="card-content">
+                <div class="row">
+                    <div class="post-statis col l4 hide-on-med-and-down" data-aos="zoom-in-right">
+                        
+<div class="statis">
+    <span class="count"><a href="/">95</a></span>
+    <span class="name">文章</span>
+</div>
+
+
+
+<div class="statis">
+    <span class="count"><a href="/categories">15</a></span>
+    <span class="name">分类</span>
+</div>
+
+
+
+<div class="statis">
+    <span class="count"><a href="/tags">52</a></span>
+    <span class="name">标签</span>
+</div>
+
+
+                    </div>
+                    <div class="col s12 m12 l4">
+                        <div class="profile center-align">
+                            <div class="avatar">
+                                <img src="/medias/avatars/chaoqiang.jpg" alt="chaoqiang"
+                                     class="circle responsive-img avatar-img">
+                            </div>
+                            <div class="author">
+                                <div class="post-statis hide-on-large-only" data-aos="zoom-in-right">
+                                    
+<div class="statis">
+    <span class="count"><a href="/">95</a></span>
+    <span class="name">文章</span>
+</div>
+
+
+
+<div class="statis">
+    <span class="count"><a href="/categories">15</a></span>
+    <span class="name">分类</span>
+</div>
+
+
+
+<div class="statis">
+    <span class="count"><a href="/tags">52</a></span>
+    <span class="name">标签</span>
+</div>
+
+
+                                </div>
+                                <div class="title">chaoqiang</div>
+                                <div class="career">博世互联工业 | 东南大学 | 机械电子工程 | 智能制造 | 微服务</div>
+                                <div class="social-link hide-on-large-only" data-aos="zoom-in-left">
+                                    
+    <a href="https://github.com/Zhengchaoqiang" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:925610069@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=925610069" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 925610069" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+    <a href="zcqandgjw" class="tooltipped" target="_blank" data-tooltip="关注我的微博: zcqandgjw" data-position="top" data-delay="50">
+        <i class="fab fa-weibo"></i>
+    </a>
+
+
+
+    <a href="zheng-chao-qiang-39" class="tooltipped" target="_blank" data-tooltip="关注我的知乎: zheng-chao-qiang-39" data-position="top" data-delay="50">
+        <i class="fab fa-zhihu1">知</i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col l4 hide-on-med-and-down" data-aos="zoom-in-left">
+                        <div class="social-link">
+                            
+    <a href="https://github.com/Zhengchaoqiang" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:925610069@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=925610069" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 925610069" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+    <a href="zcqandgjw" class="tooltipped" target="_blank" data-tooltip="关注我的微博: zcqandgjw" data-position="top" data-delay="50">
+        <i class="fab fa-weibo"></i>
+    </a>
+
+
+
+    <a href="zheng-chao-qiang-39" class="tooltipped" target="_blank" data-tooltip="关注我的知乎: zheng-chao-qiang-39" data-position="top" data-delay="50">
+        <i class="fab fa-zhihu1">知</i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="introduction center-align" data-aos="fade-up">技术萌新，新晋奶爸，程序汪。记录生活的点滴，遨游知识的海洋。</div>
+
+                <style type="text/css">
+    #posts-chart,
+    #categories-chart,
+    #tags-chart {
+        width: 100%;
+        height: 300px;
+        margin: 0.5rem auto;
+        padding: 0.5rem;
+    }
+</style>
+
+<div id="postCharts" class="post-charts">
+    <div class="title center-align" data-aos="zoom-in-up">
+        <i class="far fa-bar-chart"></i>&nbsp;&nbsp;文章统计图
+    </div>
+    <div class="row">
+        <div class="chart col s12 m6 l4" data-aos="zoom-in-up">
+            <div id="posts-chart"></div>
+        </div>
+
+        <div class="chart col s12 m6 l4" data-aos="zoom-in-up">
+            <div id="categories-chart"></div>
+        </div>
+
+        <div class="chart col s12 m6 l4" data-aos="zoom-in-up">
+            <div id="tags-chart"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/libs/echarts/echarts.min.js"></script>
+<script>
+    let postsChart = echarts.init(document.getElementById('posts-chart'));
+    let categoriesChart = echarts.init(document.getElementById('categories-chart'));
+    let tagsChart = echarts.init(document.getElementById('tags-chart'));
+
+    
+
+    let postsOption = {
+        title: {
+            text: '文章发布统计图',
+            top: -5,
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        xAxis: {
+            type: 'category',
+            data: ["2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07"]
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                name: '文章篇数',
+                type: 'line',
+                color: ['#6772e5'],
+                data: [0,0,0,0,0,1,0,0,0,0,0,0,1],
+                markPoint: {
+                    symbolSize: 45,
+                    color: ['#fa755a','#3ecf8e','#82d3f4'],
+                    data: [{
+                        type: 'max',
+                        itemStyle: {color: ['#3ecf8e']},
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        itemStyle: {color: ['#fa755a']},
+                        name: '最小值'
+                    }]
+                },
+                markLine: {
+                    itemStyle: {color: ['#ab47bc']},
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+    
+
+    let categoriesOption = {
+        title: {
+            text: '文章分类统计图',
+            top: -4,
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series: [
+            {
+                name: '分类',
+                type: 'pie',
+                radius: '50%',
+                color: ['#6772e5', '#ff9e0f', '#fa755a', '#3ecf8e', '#82d3f4', '#ab47bc', '#525f7f', '#f51c47', '#26A69A'],
+                data: [{"name":"Net Core Learning","value":0},{"name":"Diary","value":3},{"name":"2020-Architecture","value":1},{"name":"C# Basic Tutorial","value":32},{"name":"Deutsch Learning Series","value":2},{"name":"Docker Crash Tutorial","value":1},{"name":"C# Advanced Tutorial","value":21},{"name":".Net Core Learning Series","value":8},{"name":"Tech Overview","value":3},{"name":"Entity Framework Core","value":6},{"name":"Frontend Basic Tutorial","value":1},{"name":"JavaScript Basic Tutorial","value":1},{"name":"TypeScript Basic Tutorial","value":11},{"name":"NetCore 开发实战","value":2},{"name":"Angular Crash Tutorial","value":1}],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    
+
+    let tagsOption = {
+        title: {
+            text: 'TOP10 标签统计图',
+            top: -5,
+            x: 'center'
+        },
+        tooltip: {},
+        xAxis: [
+            {
+                type: 'category',
+                data: ["C#","TypeScript","Net Core","Entity Framework Core 2.X","EFCore","Thread","Async","Linq","DesignPattern","HelloWorld"]
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                type: 'bar',
+                color: ['#82d3f4'],
+                barWidth : 18,
+                data: [46,11,10,6,6,5,5,3,3,3],
+                markPoint: {
+                    symbolSize: 45,
+                    data: [{
+                        type: 'max',
+                        itemStyle: {color: ['#3ecf8e']},
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        itemStyle: {color: ['#fa755a']},
+                        name: '最小值'
+                    }],
+                },
+                markLine: {
+                    itemStyle: {color: ['#ab47bc']},
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+    // render the charts
+    postsChart.setOption(postsOption);
+    categoriesChart.setOption(categoriesOption);
+    tagsChart.setOption(tagsOption);
+</script>
+
+                
+
+                
+                
+<div class="my-skills">
+    <div class="title center-align" data-aos="zoom-in-up">
+        <i class="fas fa-wrench"></i>&nbsp;&nbsp;我的技能
+    </div>
+    <div class="row">
+        
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #FF0066 0%, #FF00CC 100%); width: 90%">
+                    <span>C#</span>
+                </div>
+                <div class="skill-bar-percent">90%</div>
+            </div>
+        </div>
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #9900FF 0%, #CC66FF 100%); width: 70%">
+                    <span>MES</span>
+                </div>
+                <div class="skill-bar-percent">70%</div>
+            </div>
+        </div>
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #2196F3 0%, #42A5F5 100%); width: 65%">
+                    <span>Embedded Development</span>
+                </div>
+                <div class="skill-bar-percent">65%</div>
+            </div>
+        </div>
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #00BCD4 0%, #80DEEA 100%); width: 50%">
+                    <span>SQL</span>
+                </div>
+                <div class="skill-bar-percent">50%</div>
+            </div>
+        </div>
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #4CAF50 0%, #81C784 100%); width: 50%">
+                    <span>Angular</span>
+                </div>
+                <div class="skill-bar-percent">50%</div>
+            </div>
+        </div>
+        
+        
+        <div class="col s12 m6 l6" data-aos="fade-up">
+            <div class="skillbar">
+                <div class="skillbar-title"
+                     style="background: linear-gradient(to right, #FFEB3B 0%, #FFF176 100%); width: 60%">
+                    <span>Machanical & Electrical</span>
+                </div>
+                <div class="skill-bar-percent">60%</div>
+            </div>
+        </div>
+        
+        
+    </div>
+
+    
+
+    
+    <div class="other-skills chip-container" data-aos="zoom-in-up">
+        <div class="sub-title center-align"><i class="fa fa-book"></i>&nbsp;&nbsp;其他技能</div>
+        <div class="tag-chips center-align">
+            
+            
+            <a href="/tags/Net-Core-3-0/">
+                <span class="chip center-align waves-effect waves-light chip-default">Net Core 3.0</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Yearly-Planning/">
+                <span class="chip center-align waves-effect waves-light chip-default">Yearly Planning</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Yearly-Review/">
+                <span class="chip center-align waves-effect waves-light chip-default">Yearly Review</span>
+            </a>
+            
+            
+            
+            <a href="/tags/CPU-Operation/">
+                <span class="chip center-align waves-effect waves-light chip-default">CPU Operation</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Storage-Architecture/">
+                <span class="chip center-align waves-effect waves-light chip-default">Storage Architecture</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Buffering-and-Caching/">
+                <span class="chip center-align waves-effect waves-light chip-default">Buffering and Caching</span>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/tags/Deutsch/">
+                <span class="chip center-align waves-effect waves-light chip-default">Deutsch</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Nicos-Weg/">
+                <span class="chip center-align waves-effect waves-light chip-default">Nicos Weg</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Docker/">
+                <span class="chip center-align waves-effect waves-light chip-default">Docker</span>
+            </a>
+            
+            
+            
+            <a href="/tags/IOSerialize/">
+                <span class="chip center-align waves-effect waves-light chip-default">IOSerialize</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Linq/">
+                <span class="chip center-align waves-effect waves-light chip-default">Linq</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Generic/">
+                <span class="chip center-align waves-effect waves-light chip-default">Generic</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Covariant/">
+                <span class="chip center-align waves-effect waves-light chip-default">Covariant</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Contravariant/">
+                <span class="chip center-align waves-effect waves-light chip-default">Contravariant</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Thread/">
+                <span class="chip center-align waves-effect waves-light chip-default">Thread</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Async/">
+                <span class="chip center-align waves-effect waves-light chip-default">Async</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Reflection/">
+                <span class="chip center-align waves-effect waves-light chip-default">Reflection</span>
+            </a>
+            
+            
+            
+            <a href="/tags/OOP/">
+                <span class="chip center-align waves-effect waves-light chip-default">OOP</span>
+            </a>
+            
+            
+            
+            <a href="/tags/POP/">
+                <span class="chip center-align waves-effect waves-light chip-default">POP</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Attribute/">
+                <span class="chip center-align waves-effect waves-light chip-default">Attribute</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Delegate/">
+                <span class="chip center-align waves-effect waves-light chip-default">Delegate</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Event/">
+                <span class="chip center-align waves-effect waves-light chip-default">Event</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Lambda/">
+                <span class="chip center-align waves-effect waves-light chip-default">Lambda</span>
+            </a>
+            
+            
+            
+            <a href="/tags/AOP/">
+                <span class="chip center-align waves-effect waves-light chip-default">AOP</span>
+            </a>
+            
+            
+            
+            <a href="/tags/CLRCore/">
+                <span class="chip center-align waves-effect waves-light chip-default">CLRCore</span>
+            </a>
+            
+            
+            
+            <a href="/tags/DesignPattern/">
+                <span class="chip center-align waves-effect waves-light chip-default">DesignPattern</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Expression/">
+                <span class="chip center-align waves-effect waves-light chip-default">Expression</span>
+            </a>
+            
+            
+            
+            <a href="/tags/SixPrinciples/">
+                <span class="chip center-align waves-effect waves-light chip-default">SixPrinciples</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Net-Core/">
+                <span class="chip center-align waves-effect waves-light chip-default">Net Core</span>
+            </a>
+            
+            
+            
+            <a href="/tags/MicroService/">
+                <span class="chip center-align waves-effect waves-light chip-default">MicroService</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Net-Core/">
+                <span class="chip center-align waves-effect waves-light chip-default">.Net Core</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Tech-stack/">
+                <span class="chip center-align waves-effect waves-light chip-default">Tech stack</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Entity-Framework-Core-2-X/">
+                <span class="chip center-align waves-effect waves-light chip-default">Entity Framework Core 2.X</span>
+            </a>
+            
+            
+            
+            <a href="/tags/EFCore/">
+                <span class="chip center-align waves-effect waves-light chip-default">EFCore</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Html5/">
+                <span class="chip center-align waves-effect waves-light chip-default">Html5</span>
+            </a>
+            
+            
+            
+            <a href="/tags/CSS/">
+                <span class="chip center-align waves-effect waves-light chip-default">CSS</span>
+            </a>
+            
+            
+            
+            <a href="/tags/javascript/">
+                <span class="chip center-align waves-effect waves-light chip-default">javascript</span>
+            </a>
+            
+            
+            
+            <a href="/tags/HelloWorld/">
+                <span class="chip center-align waves-effect waves-light chip-default">HelloWorld</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Diary/">
+                <span class="chip center-align waves-effect waves-light chip-default">Diary</span>
+            </a>
+            
+            
+            
+            <a href="/tags/PMP/">
+                <span class="chip center-align waves-effect waves-light chip-default">PMP</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Project-Management/">
+                <span class="chip center-align waves-effect waves-light chip-default">Project Management</span>
+            </a>
+            
+            
+            
+            <a href="/tags/TypeScript/">
+                <span class="chip center-align waves-effect waves-light chip-default">TypeScript</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Authentication/">
+                <span class="chip center-align waves-effect waves-light chip-default">Authentication</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Authorization/">
+                <span class="chip center-align waves-effect waves-light chip-default">Authorization</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Full-Stack/">
+                <span class="chip center-align waves-effect waves-light chip-default">Full Stack</span>
+            </a>
+            
+            
+            
+            <a href="/tags/JWT/">
+                <span class="chip center-align waves-effect waves-light chip-default">JWT</span>
+            </a>
+            
+            
+            
+            <a href="/tags/IdentityServer4/">
+                <span class="chip center-align waves-effect waves-light chip-default">IdentityServer4</span>
+            </a>
+            
+            
+            
+            <a href="/tags/OAuth-2-0/">
+                <span class="chip center-align waves-effect waves-light chip-default">OAuth 2.0</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Software/">
+                <span class="chip center-align waves-effect waves-light chip-default">Software</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Commands/">
+                <span class="chip center-align waves-effect waves-light chip-default">Commands</span>
+            </a>
+            
+            
+            
+            
+        </div>
+    </div>
+    
+
+</div>
+
+                
+
+                <!-- 
+                
+<div id="myGallery" class="my-gallery">
+    <div class="title center-align" data-aos="zoom-in-up">
+        <i class="far fa-image"></i>&nbsp;&nbsp;相册
+    </div>
+    <div class="row">
+        
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/0.jpg">
+                <img src="/medias/featureimages/0.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/1.jpg">
+                <img src="/medias/featureimages/1.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/2.jpg">
+                <img src="/medias/featureimages/2.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/4.jpg">
+                <img src="/medias/featureimages/4.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/5.jpg">
+                <img src="/medias/featureimages/5.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/6.jpg">
+                <img src="/medias/featureimages/6.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/7.jpg">
+                <img src="/medias/featureimages/7.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/8.jpg">
+                <img src="/medias/featureimages/8.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        <div class="photo col s12 m6 l4" data-aos="fade-up">
+            <div class="img-item" data-src="/medias/featureimages/9.jpg">
+                <img src="/medias/featureimages/9.jpg" class="responsive-img">
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+<script>
+    $(function () {
+        let animateClass = 'animated pulse';
+        $('#myGallery .photo').hover(function () {
+            $(this).addClass(animateClass);
+        }, function () {
+            $(this).removeClass(animateClass);
+        });
+    });
+</script>
+                 -->
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <div class="card-content article-card-content">
+                        <div class="title center-align" data-aos="zoom-in-up">
+                            <i class="fa fa-address-book"></i>&nbsp;&nbsp;My Resume
+                        </div>
+                        <div id="articleContent" data-aos="fade-up">
+                            <h1 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h1><table>
+    <tbody>
+        <tr>
+            <td>姓  名：</td>    <td>郑超强</td>    <td>出生年月：</td>    <td>1993.10</td>
+            <td rowspan="5"><div class="img-item" data-src="/medias/avatars/resume.jpg" data-sub-html=".caption"><img width="120" src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="/medias/avatars/resume.jpg" class="img-shadow img-margin"></div></td>
+        </tr>
+        <tr>
+            <td>名  族：</td>    <td>汉</td>    <td>籍  贯：</td>    <td>江苏苏州</td>
+        </tr>
+        <tr>
+            <td>电  话：</td>    <td>152****4374</td>    <td>政治面貌：</td>    <td>中共党员</td>
+        </tr>
+        <tr>
+            <td>E-mail：</td>    <td><a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&amp;email=925610069@qq.com" target="_blank" rel="noopener">925610069@qq.com</a></td>  <td>学  历：</td>    <td>硕士</td>    
+        </tr>
+        <tr>
+            <td>住  址：</td>    <td>江苏省苏州市相城区</td>    <td>个人网站：</td>    <td>  <a href="https://www.zhengchaoqiang.com" target="_blank">https://www.zhengchaoqiang.com</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<h1 id="教育经历"><a href="#教育经历" class="headerlink" title="教育经历"></a>教育经历</h1><table>
+    <tbody>
+        <tr>
+            <td>2015.9——2018.6</td>    <td>硕士（免研）</td>    <td>东南大学</td>    <td>机械电子工程</td>
+        </tr>
+        <tr>
+            <td>2011.9——2015.6</td>    <td>学士（专业前5%）</td>    <td>南京师范大学</td>    <td>机械工程及自动化</td>
+        </tr>
+        <tr>
+            <td>2008.09——2011.06</td>    <td>高中（保送）</td>    <td>江苏省黄埭中学</td>    <td>物理化学</td>
+        </tr>
+    </tbody>
+</table>
+
+<h1 id="工作经历"><a href="#工作经历" class="headerlink" title="工作经历"></a>工作经历</h1><blockquote>
+<p>2018.7-至今  博世汽车部件苏州有限公司</p>
+</blockquote>
+<h1 id="校园实践"><a href="#校园实践" class="headerlink" title="校园实践"></a>校园实践</h1><table><tbody><tr><td>
+
+<ul>
+<li><p><strong>远程数据采集分析及监测系统</strong>        <strong>国家自然科学基金</strong>      <strong>主要负责人</strong>     <strong>2016.09-2018.06</strong><br>本项目为校企合作项目，基于灌装自动生产线开发了一个完整的远程实时监控与数据采集分析系统，采用C/S 结构，该系统具有对生产数据与设备状况实时监测、生产现场视频实时监控、远程故障诊断、专家在线视频会议 和生产评估分析等功能。目前，该系统第二版已经投入产线制造商工厂试运行，状态良好。 </p>
+<ul>
+<li>基于云服务和云存储完成了对网络摄像头数据的实时获取、录像回放、转动控制、变焦等操作的程序开发； </li>
+<li>基于 ESFramework 框架完成了视频会议子系统的设计，集多人视频/语音/文字会话、多人协作电子白板、 文件共享和桌面共享功能于一体。 </li>
+<li>基于webservice技术完成了现场数据实时存储和共享，设计完成了SPC质量在线评估子系统； </li>
+<li>完成以ARM 为处理器的数据采集控制系统的电路设计和PCB设计，实现灌装现场的数据无线稳定传输； </li>
+<li>完成位置、压力、温度、流量等各类传感器的选型及底层驱动编程，采集控制系统搭载UCOSIII操作系统。<br><br></li>
+</ul>
+</li>
+<li><p><strong>医用智能无影灯控制系统</strong>        <strong>国家自然科学基金</strong>      <strong>主要负责人</strong>     <strong>2016.03-2016.07</strong><br>本项目为校企合作项目，设计并完成了医用无影灯的控制系统，该系统具有故障自检、交互优良、电磁干扰 小，切换响应快等优点，申请发明专利一项，发表EI文章一篇，目前已经通过质检测试，投入使用。 </p>
+<ul>
+<li>采用硬件检测和软件检测相结合的思路，提出了一种新的故障诊断方式，用嵌入式 C语言编写控制系统底层 程序，采用FreeRTOS操作系统优化交互，提高实时性； </li>
+<li>设计无影灯控制系统电路和 PCB，创新故障检测电路和检测方法，优化人机交互。 <br><br></li>
+</ul>
+</li>
+<li><p><strong>复杂环境下自动引导运输车（AGV）调度系统设计 **        **省自然科学基金</strong>      <strong>2015.11-2016.02</strong><br>本项目设计了一款自动装载卸货的 AGV 调度系统，实现了可编辑地图的多 AGV 调度，通过PC上位机和引 入的安卓终端均可建立各种流转运输任务，使多AGV 有序完成装载、堆垛、卸载等操作。 </p>
+<ul>
+<li>采用最佳优先启发式 A*搜索+时间窗的路径规划算法，对 AGV 进行区域隔离，冲突地段进行绕行重合，优 化了多AGV 的任务调度算法； </li>
+<li>基于Socket通信开发了Andriod终端，设计了相关的通信指令，拓展了用户接入方式。<br><br></li>
+</ul>
+</li>
+<li><p><strong>基于STM32的校园智能气象站设计</strong>        <strong>企业合作项目</strong>      <strong>2015.09-2015.12</strong><br>本项目为校企合作项目，设计了一款智能气象站，实现了温度、湿度、PM2.5、风向风速等气象指标的实时 显示和数据WiFi实时传输，完成下位机底层驱动程序编写调试和上位机实时监测软件的开发。</p>
+</li>
+</ul>
+</td></tr></tbody></table>
+
+<h1 id="获得荣誉"><a href="#获得荣誉" class="headerlink" title="获得荣誉"></a>获得荣誉</h1><table><tbody><tr><td>
+✓ 担任班长4年，带领班级获得校“十佳班级”和“骑行南京迎青奥”社会实践团体一等奖等荣誉； <br>
+✓ 多次获得校级优共产党员，三好学生，优秀学生干部，十佳青年，优秀心理气象员等称号； <br>
+✓ 获国家励志奖学金（三次），校一、二等奖学金多次，多次获苏州校友奖学金，周昭常奖学金，院友奖学金等；<br>
+✓ 校级“节能减排大赛”担任队长并获得二等奖，“黄金罗盘”职业规划大赛一等奖； <br>
+✓ 公开发明专利两篇：<br>
+  “一种医用卤素无影灯智能控制系统”  <br>
+  “一种灌装生产线的远程数据采集与实时分析系统”  <br>
+✓ 软件著作权一项： <br>
+  “气雾剂灌装生产线的数据采集系统软件（AFPLDASS）” <br>
+✓ 发表EI论文三篇： <br>
+  “Intelligent Control System of Medical Shadowless Lamps Based on STM32”   <br>
+  “Real-time Remote Data Acquisition and Process Monitoring System for Automatic Filling Line” <br>
+  “Design of Multi-step Stepper Motor Coordinated Control System Based On Bresenham Algorithm” <br>
+ </td></tr></tbody></table>
+
+<h1 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h1><!-- * <b>电子邮箱</b>
+hwsun@sunhwee.com
+* <b>地址</b>
+成都市高新区（西区）西源大道2006号科研大楼B438，邮编611731   
+* <b>QQ</b>
+948840751 --><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            <span>
+                <div>
+                    <span style="color:#ffffff;">Copyright&copy; 2020 chaoqiang. All Rights Reserved</span>
+                </div>
+                
+                <div style="width:500px;margin:0 auto; padding:0px 0;">
+                    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050702010849" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                        <img src="https://blog-icp-1257411902.cos.ap-shanghai.myqcloud.com/icp.png" style="float:left;"/>
+                        <span style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;">苏公网安备 32050702010849号 苏ICP备20017637号</span>
+                    </a>
+                    <!-- <span style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;"> 苏ICP备20017637号</span> -->
+                </div>
+            </span>
+            <span id="sitetime"></span>
+        </div>
+
+    
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已勉强运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+
+
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" color="0,0,255"
+        pointColor="0,0,255" opacity='0.7'
+        zIndex="-1" count="99"
+        src="/libs/background/canvas-nest.js"></script>
+    
+
+    
+
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+     <!-- Chaoqiang shw2018 add 2019.08.28 -->
+     <script type="text/javascript">
+        var OriginTitile = document.title,
+            st;
+        document.addEventListener("visibilitychange", function () {
+            document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                    document.title = OriginTitile
+                }, 3e3))
+        })
+    </script>
+
+    <!-- 鼠标点击烟花爆炸效果  Chaoqiang shw2018 add 2019.09.09 -->
+    
+        <canvas class="fireworks" style="position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+        <script type="text/javascript" src="/js/fireworks.js"></script>
+    
+
+    <!-- 背景雪花飘落特效Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 鼠标点击文字特效 Chaoqiang shw2018 add 2019.09.10-->
+    
+        <script src="/js/wenzi.js" type="text/javascript"></script>
+    
+
+    <!-- 背景雪花飘落特效 Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 在线聊天工具  Chaoqiang shw2018 add 2019.09.11 -->
+    
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":200},"mobile":{"show":false},"react":{"opacity":0.7}});</script><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

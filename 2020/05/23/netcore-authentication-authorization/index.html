@@ -1,0 +1,2297 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Netcore认证授权与IdentityServer4（1）鉴权授权源码, Bosch SEU chaoqiang Mechanics Eletronics 超强 micro-service Intelligent-Manufacturing MES">
+    <meta name="description" content="主要概要这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：
+
+鉴权授权流程变化
+源码解读鉴权
+源码解读多授权策略
+JWT和Identity
+
+">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Netcore认证授权与IdentityServer4（1）鉴权授权源码 | chaoqiang&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">chaoqiang's Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/AV" class="waves-effect waves-light">
+
+      
+      <i class="fas fa-list" style="zoom: 0.6;"></i>
+      
+      <span>Medias</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/Music">
+          
+          <i class="fas fa-music" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Musics</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Movie">
+          
+          <i class="fas fa-film" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Movies</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/Book">
+          
+          <i class="fas fa-book" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Books</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/AV">
+          
+          <i class="fas fa-image" style="margin-top: -20px; zoom: 0.6;"></i>
+          
+          <span>Galleries</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">chaoqiang's Blog</div>
+        <div class="logo-desc">
+            
+            博世互联工业 | 智能制造 | 微服务架构 | 东南大学 | 机械电子工程
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa-fw fas fa-list"></i>
+			
+			Medias
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>   
+				
+                  <a href="/Music " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-music" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Musics</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Movie " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-film" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Movies</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/Book " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-book" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Books</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/AV " style="margin-left:75px";>
+				  
+				   <i class="fa fas fa-image" style="position: absolute;left:50px" ></i>
+			      
+		          <span>Galleries</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/Zhengchaoqiang" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/Zhengchaoqiang" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+<script src="/libs/cryptojs/crypto-js.min.js"></script>
+<script>
+    (function() {
+        let pwd = '';
+        if (pwd && pwd.length > 0) {
+            if (pwd !== CryptoJS.SHA256(prompt('请输入访问本文章的密码')).toString(CryptoJS.enc.Hex)) {
+                alert('密码错误，将返回主页！');
+                location.href = '/';
+            }
+        }
+    })();
+</script>
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">Netcore认证授权与IdentityServer4（1）鉴权授权源码</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/Net-Core/">
+                                <span class="chip bg-color">Net Core</span>
+                            </a>
+                        
+                            <a href="/tags/Authentication/">
+                                <span class="chip bg-color">Authentication</span>
+                            </a>
+                        
+                            <a href="/tags/Authorization/">
+                                <span class="chip bg-color">Authorization</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                .Net Core Learning Series
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-05-23
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2020-06-14
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    3k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    14 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="主要概要"><a href="#主要概要" class="headerlink" title="主要概要"></a>主要概要</h2><p>这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：</p>
+<ol>
+<li>鉴权授权流程变化</li>
+<li>源码解读鉴权</li>
+<li>源码解读多授权策略</li>
+<li>JWT和Identity</li>
+</ol>
+<h2 id="鉴权授权流程变化"><a href="#鉴权授权流程变化" class="headerlink" title="鉴权授权流程变化"></a>鉴权授权流程变化</h2><p><strong>Http协议</strong></p>
+<ul>
+<li>无状态&amp;轻量级</li>
+<li>请求–响应式–传输是文本</li>
+<li>再次请求—不知道你刚来过</li>
+<li>如果想识别—带个签名/证明/工卡/Token—就是放在文本里面</li>
+</ul>
+<h3 id="Cookie-Session"><a href="#Cookie-Session" class="headerlink" title="Cookie/Session"></a>Cookie/Session</h3><p><strong>基本流程</strong>：其实是为了解决无状态下的用户识别问题<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/sessioncookie.png" alt=""></p>
+<p>第一，如果是<strong>集群</strong>，cookie和session如何应对？<br>Session共享，完成集群的session识别。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/nginxSeeion.jpg" alt=""></p>
+<p>第二，如果是分布式的，如何解决呢？甚至是分布式的还是跨局域网络的，第三方的，又该如何解决？<br>会用Token来解决，可以参考下图Id4的架构。<br><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/IdentityServer4.png" alt=""></p>
+<h2 id="源码解读鉴权"><a href="#源码解读鉴权" class="headerlink" title="源码解读鉴权"></a>源码解读鉴权</h2><h3 id="登录验证-授权"><a href="#登录验证-授权" class="headerlink" title="登录验证-授权"></a>登录验证-授权</h3><ul>
+<li>常规的Cookie+Session+Filter模式</li>
+<li>基于IAuthorizationFilter，</li>
+<li>通过OnAuthorization</li>
+<li>发生在请求进入MVC伊始</li>
+</ul>
+<h4 id="Cookie-Session方式"><a href="#Cookie-Session方式" class="headerlink" title="Cookie+Session方式"></a>Cookie+Session方式</h4><p>cookie只是实现session的其中一种方案。虽然是最常用的，但并不是唯一的方法。禁用cookie后还有其他方法存储，比如放在url中。<br>先看这种土办法如何实现：<br>第一，要在自定义Attribute，需要继承IAuthorizationFilter,如下：<br>context.HttpContext.Request.Cookies[“CurrentUser”];会检查cookie中是否有current user。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CustomAuthorizationFilterAttribute</span> <span class="token punctuation">:</span> Attribute<span class="token punctuation">,</span> IAuthorizationFilter
+    <span class="token punctuation">{</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">OnAuthorization</span><span class="token punctuation">(</span>AuthorizationFilterContext context<span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>context<span class="token punctuation">.</span>ActionDescriptor<span class="token punctuation">.</span>EndpointMetadata<span class="token punctuation">.</span><span class="token function">Any</span><span class="token punctuation">(</span>item <span class="token operator">=</span><span class="token operator">></span> item <span class="token keyword">is</span> AllowAnonymousAttribute<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                <span class="token keyword">return</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//匿名 不检查</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">string</span> sUser <span class="token operator">=</span> context<span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>Request<span class="token punctuation">.</span>Cookies<span class="token punctuation">[</span><span class="token string">"CurrentUser"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>sUser <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                context<span class="token punctuation">.</span>Result <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RedirectResult</span><span class="token punctuation">(</span><span class="token string">"~/Home/Index"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">else</span>
+            <span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//还应该检查下权限</span>
+                <span class="token keyword">return</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>第二，配置管道，如下：使用cookie和Authorization并且关了Authentication.</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">ConfigureServices</span><span class="token punctuation">(</span>IServiceCollection services<span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+  services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Configure</span><span class="token punctuation">(</span>IApplicationBuilder app<span class="token punctuation">,</span> IWebHostEnvironment env<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+  <span class="token comment" spellcheck="true">//app.UseAuthentication();</span>
+  app<span class="token punctuation">.</span><span class="token function">UseAuthorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>第三，配置验证标签：无论加不加[CustomAuthorizationFilter]这个标签如何都会去执行CustomAuthorizationFilterAttribute 中的OnAuthorization方法。如果是加了AllowAnonymous这个标签，那就回通过。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span>CustomAuthorizationFilter<span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HomeController</span> <span class="token punctuation">:</span> Controller
+<span class="token punctuation">{</span>
+   <span class="token punctuation">[</span>AllowAnonymous<span class="token punctuation">]</span>
+   <span class="token keyword">public</span> IActionResult <span class="token function">Login</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">,</span> <span class="token keyword">string</span> password<span class="token punctuation">)</span>
+   <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token string">"chaoqiang"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>CurrentCultureIgnoreCase<span class="token punctuation">)</span><span class="token operator">&amp;&amp;</span> password<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"123456"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token punctuation">{</span>
+          <span class="token preprocessor property">#<span class="token directive keyword">region</span> Filter</span>
+          <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>Response<span class="token punctuation">.</span>Cookies<span class="token punctuation">.</span><span class="token function">Append</span><span class="token punctuation">(</span><span class="token string">"CurrentUser"</span><span class="token punctuation">,</span> <span class="token string">"chaoqiang"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Microsoft<span class="token punctuation">.</span>AspNetCore<span class="token punctuation">.</span>Http<span class="token punctuation">.</span>CookieOptions</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+          <span class="token punctuation">{</span>
+            Expires <span class="token operator">=</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span>
+          <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span>
+
+          <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+          <span class="token punctuation">{</span>
+            Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+            Message <span class="token operator">=</span> <span class="token string">"登录成功"</span>
+           <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span>
+        <span class="token keyword">else</span>
+        <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+          <span class="token punctuation">{</span>
+            Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+            Message <span class="token operator">=</span> <span class="token string">"登录失败"</span>
+          <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> IActionResult <span class="token function">Privacy</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上述过程是：当通过login的验证之后，会将cookie放入rsponse中，后面请求就可以访问Privacy这个方法了。</p>
+<h4 id="Authentication和Authorization"><a href="#Authentication和Authorization" class="headerlink" title="Authentication和Authorization"></a>Authentication和Authorization</h4><ul>
+<li>鉴权——-&gt;授权</li>
+<li>鉴权：鉴定身份，有没有登录，你是谁</li>
+<li>授权：判定有没有权限</li>
+</ul>
+<p>鉴权授权里面，是通过AuthenticationHttpContextExtensions的5个方法—其实最终还是要写cookie/session/信息</p>
+<p>都是调用的IAuthenticationService，ConfigureService注册进去</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 最基础认证--自定义Handler</span>
+<span class="token comment" spellcheck="true">//services.AddAuthenticationCore();</span>
+services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>AddAuthentication又通过AuthenticationCoreServiceCollectionExtensions.AddAuthenticationCore实现，主要是下面三个：</p>
+<ul>
+<li><p>IAuthenticationService</p>
+</li>
+<li><p>IAuthenticationHandlerProvider</p>
+</li>
+<li><p>IAuthenticationSchemeProvider</p>
+</li>
+<li><p>5个方法默认就在AuthenticationService，找handler完成处理</p>
+</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/AuthenticationHttpContextExtensions.png" alt=""></p>
+<h4 id="造轮子"><a href="#造轮子" class="headerlink" title="造轮子"></a>造轮子</h4><p>理解完源码的脉络，尝试自己写个简化版的鉴权流程：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 最基础认证--自定义Handler</span>
+services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+services<span class="token punctuation">.</span><span class="token function">AddAuthenticationCore</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span> options<span class="token punctuation">.</span><span class="token generic-method function">AddScheme<span class="token punctuation">&lt;</span>CustomHandler<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">,</span> <span class="token string">"DemoScheme"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>此时对应的中间件<code>app.UseAuthentication();</code>这个就不再需要了，用自定义的处理方式了。</p>
+<p>下面看一下对应的 CustomHandler是如何来构造的：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token comment" spellcheck="true">// CustomHandler完成5个动作</span>
+<span class="token comment" spellcheck="true">// 三个接口，登录/退出分开的原因有远程校验</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CustomHandler</span> <span class="token punctuation">:</span> IAuthenticationHandler<span class="token punctuation">,</span> IAuthenticationSignInHandler<span class="token punctuation">,</span> IAuthenticationSignOutHandler
+<span class="token punctuation">{</span>
+  <span class="token keyword">public</span> AuthenticationScheme Scheme <span class="token punctuation">{</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">private</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+  <span class="token keyword">protected</span> HttpContext Context <span class="token punctuation">{</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">private</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> Task <span class="token function">InitializeAsync</span><span class="token punctuation">(</span>AuthenticationScheme scheme<span class="token punctuation">,</span> HttpContext context<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    Scheme <span class="token operator">=</span> scheme<span class="token punctuation">;</span>
+    Context <span class="token operator">=</span> context<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>AuthenticateResult<span class="token operator">></span> <span class="token function">AuthenticateAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> cookie <span class="token operator">=</span> Context<span class="token punctuation">.</span>Request<span class="token punctuation">.</span>Cookies<span class="token punctuation">[</span><span class="token string">"CustomCookie"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">string</span><span class="token punctuation">.</span><span class="token function">IsNullOrEmpty</span><span class="token punctuation">(</span>cookie<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> AuthenticateResult<span class="token punctuation">.</span><span class="token function">NoResult</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> AuthenticateResult<span class="token punctuation">.</span><span class="token function">Success</span><span class="token punctuation">(</span><span class="token function">Deserialize</span><span class="token punctuation">(</span>cookie<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> Task <span class="token function">ChallengeAsync</span><span class="token punctuation">(</span>AuthenticationProperties properties<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//Context.Response.Redirect("/Account/Login");//跳转页面--上端返回json</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> Task <span class="token function">ForbidAsync</span><span class="token punctuation">(</span>AuthenticationProperties properties<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    Context<span class="token punctuation">.</span>Response<span class="token punctuation">.</span>StatusCode <span class="token operator">=</span> <span class="token number">403</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> Task <span class="token function">SignInAsync</span><span class="token punctuation">(</span>ClaimsPrincipal user<span class="token punctuation">,</span> AuthenticationProperties properties<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> ticket <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AuthenticationTicket</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> properties<span class="token punctuation">,</span> Scheme<span class="token punctuation">.</span>Name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    Context<span class="token punctuation">.</span>Response<span class="token punctuation">.</span>Cookies<span class="token punctuation">.</span><span class="token function">Append</span><span class="token punctuation">(</span><span class="token string">"CustomCookie"</span><span class="token punctuation">,</span> <span class="token function">Serialize</span><span class="token punctuation">(</span>ticket<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> Task <span class="token function">SignOutAsync</span><span class="token punctuation">(</span>AuthenticationProperties properties<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    Context<span class="token punctuation">.</span>Response<span class="token punctuation">.</span>Cookies<span class="token punctuation">.</span><span class="token function">Delete</span><span class="token punctuation">(</span><span class="token string">"CustomCookie"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">private</span> AuthenticationTicket <span class="token function">Deserialize</span><span class="token punctuation">(</span><span class="token keyword">string</span> content<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> byteTicket <span class="token operator">=</span> System<span class="token punctuation">.</span>Text<span class="token punctuation">.</span>Encoding<span class="token punctuation">.</span>Default<span class="token punctuation">.</span><span class="token function">GetBytes</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> TicketSerializer<span class="token punctuation">.</span>Default<span class="token punctuation">.</span><span class="token function">Deserialize</span><span class="token punctuation">(</span>byteTicket<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token keyword">private</span> <span class="token keyword">string</span> <span class="token function">Serialize</span><span class="token punctuation">(</span>AuthenticationTicket ticket<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//需要引入  Microsoft.AspNetCore.Authentication</span>
+    <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> byteTicket <span class="token operator">=</span> TicketSerializer<span class="token punctuation">.</span>Default<span class="token punctuation">.</span><span class="token function">Serialize</span><span class="token punctuation">(</span>ticket<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> Encoding<span class="token punctuation">.</span>Default<span class="token punctuation">.</span><span class="token function">GetString</span><span class="token punctuation">(</span>byteTicket<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>第一步</strong>：登陆一下 访问login方法，将claim放入到claimIdentity中，再将claimIdentity 放入到ClaimsPrincipal中，然后丢给SignInAsync这个方法去处理，从而找对应的这个CustomHandler。<br>说明一下：</p>
+<ul>
+<li>Claim：信息</li>
+<li>ClaimsIdentity：身份</li>
+<li>ClaimsPrincipal：一个人可以有多个身份</li>
+<li>AuthenticationTicket：用户票据</li>
+<li>加密一下—写入cookie</li>
+</ul>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Login</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">,</span> <span class="token keyword">string</span> password<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">//base.HttpContext.RequestServices.</span>
+  <span class="token comment" spellcheck="true">//IAuthenticationService</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token string">"chaoqiang"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>CurrentCultureIgnoreCase<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> password<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"123456"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//初始化ClaimsIdentity("Custom")带上参数，否则IsAuthenticated是false</span>
+    <span class="token keyword">var</span> claimIdentity <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ClaimsIdentity</span><span class="token punctuation">(</span><span class="token string">"Custom"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> name<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Email<span class="token punctuation">,</span> <span class="token string">"chaoqiang@qq.com"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">//claimIdentity.IsAuthenticated = true;</span>
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">SignInAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">ClaimsPrincipal</span><span class="token punctuation">(</span>claimIdentity<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AuthenticationProperties</span>
+    <span class="token punctuation">{</span>
+      ExpiresUtc <span class="token operator">=</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录成功"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录失败"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>第二步，鉴权，访问AuthenticateAsync方法，通过scheme告诉Authenticate用对应的处理器，比如这里是在cookie中鉴权。这里的scheme对应的handler就是在startup中注入的<code>CustomeScheme</code>对应<code>CustomeHandler</code>,把Principal给Http.Context.User,就完成了鉴权的过程。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Authentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">var</span> result <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">AuthenticateAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>result<span class="token operator">?</span><span class="token punctuation">.</span>Principal <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User <span class="token operator">=</span> result<span class="token punctuation">.</span>Principal<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"认证成功，包含用户{base.HttpContext.User.Identity.Name}"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"认证失败，用户未登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>第三步，授权，一般是先鉴权，然后授权，也就是做一些检查。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Authorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">var</span> result <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">AuthenticateAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>result<span class="token operator">?</span><span class="token punctuation">.</span>Principal <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"认证失败，用户未登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User <span class="token operator">=</span> result<span class="token punctuation">.</span>Principal<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment" spellcheck="true">//授权</span>
+  <span class="token keyword">var</span> user <span class="token operator">=</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>user<span class="token operator">?</span><span class="token punctuation">.</span>Identity<span class="token operator">?</span><span class="token punctuation">.</span>IsAuthenticated <span class="token operator">?</span><span class="token operator">?</span> <span class="token keyword">false</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>user<span class="token punctuation">.</span>Identity<span class="token punctuation">.</span>Name<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"Eleven"</span><span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>OrdinalIgnoreCase<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ForbidAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+      <span class="token punctuation">{</span>
+        Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+        Message <span class="token operator">=</span> $<span class="token string">"授权失败，用户{base.HttpContext.User.Identity.Name}没有权限"</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权成功，用户{base.HttpContext.User.Identity.Name}具备权限"</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ChallengeAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权失败，没有登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>比如，下面有一个需要授权的页面，来访问：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Info</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">var</span> result <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">AuthenticateAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>result<span class="token operator">?</span><span class="token punctuation">.</span>Principal <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"认证失败，用户未登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User <span class="token operator">=</span> result<span class="token punctuation">.</span>Principal<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment" spellcheck="true">//授权</span>
+  <span class="token keyword">var</span> user <span class="token operator">=</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>user<span class="token operator">?</span><span class="token punctuation">.</span>Identity<span class="token operator">?</span><span class="token punctuation">.</span>IsAuthenticated <span class="token operator">?</span><span class="token operator">?</span> <span class="token keyword">false</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>user<span class="token punctuation">.</span>Identity<span class="token punctuation">.</span>Name<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"Eleven"</span><span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>OrdinalIgnoreCase<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ForbidAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+      <span class="token punctuation">{</span>
+        Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+        Message <span class="token operator">=</span> $<span class="token string">"授权失败，用户{base.HttpContext.User.Identity.Name}没有权限"</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//有权限</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权成功，正常访问页面！"</span><span class="token punctuation">,</span>
+      Html <span class="token operator">=</span> <span class="token string">"Hello Root!"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ChallengeAsync</span><span class="token punctuation">(</span><span class="token string">"CustomScheme"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权失败，没有登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>小结一下（其实还是那套东西）</p>
+<ul>
+<li>登录写入凭证</li>
+<li>鉴权就是找出用户</li>
+<li>授权就是判断权限</li>
+<li>退出就是清理凭证</li>
+</ul>
+<p>再回顾一下，Asp .Net Core标准内置的鉴权授权是如何来配置的？<br>1.configureservice里面</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>DefaultAuthenticateScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//不能少 通过scheme找到handler</span>
+  options<span class="token punctuation">.</span>DefaultSignInScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span>DefaultChallengeScheme <span class="token operator">=</span> <span class="token string">"Cookie/Login"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>2.Configure里要启用鉴权授权中间件</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">app<span class="token punctuation">.</span><span class="token function">UseAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">UseAuthorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>3.在controller或者Action上添加<code>[Authorize]</code>标签</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span>AllowAnonymous<span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Login</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">,</span> <span class="token keyword">string</span> password<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token string">"chaoqiang"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>CurrentCultureIgnoreCase<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> password<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"123456"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//var claimIdentity = new ClaimsIdentity("Cookie");</span>
+    <span class="token comment" spellcheck="true">//claimIdentity.AddClaim(new Claim(ClaimTypes.Name, name));</span>
+    <span class="token comment" spellcheck="true">//claimIdentity.AddClaim(new Claim(ClaimTypes.Email, "chaoqiang@qq.com"));</span>
+
+    <span class="token preprocessor property">#<span class="token directive keyword">region</span> 升级JwtClaimTypes  cookie会短一点</span>
+    <span class="token keyword">var</span> claimIdentity <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ClaimsIdentity</span><span class="token punctuation">(</span><span class="token string">"Cookie"</span><span class="token punctuation">,</span> JwtClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> JwtClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>JwtClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> name<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>JwtClaimTypes<span class="token punctuation">.</span>Email<span class="token punctuation">,</span> <span class="token string">"chaoqiang@qq.com"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span>
+
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">SignInAsync</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ClaimsPrincipal</span><span class="token punctuation">(</span>claimIdentity<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AuthenticationProperties</span>
+    <span class="token punctuation">{</span>
+      ExpiresUtc <span class="token operator">=</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//省略scheme</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录成功"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录失败"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>4.鉴权授权,一起放在这个AuthenticationAuthorization方法中，其中<code>base.HttpContext.AuthenticateAsync();</code> 这一步可以不用执行，因为中间件根据标签<code>[Authorize]</code>已经把事情做完了。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">AuthenticationAuthorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">var</span> result <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">AuthenticateAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//默认CookieAuthenticationDefaults.AuthenticationScheme</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>result<span class="token operator">?</span><span class="token punctuation">.</span>Principal <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"认证失败，用户未登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User <span class="token operator">=</span> result<span class="token punctuation">.</span>Principal<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment" spellcheck="true">//授权</span>
+  <span class="token keyword">var</span> user <span class="token operator">=</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span>User<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>user<span class="token operator">?</span><span class="token punctuation">.</span>Identity<span class="token operator">?</span><span class="token punctuation">.</span>IsAuthenticated <span class="token operator">?</span><span class="token operator">?</span> <span class="token keyword">false</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>user<span class="token punctuation">.</span>Identity<span class="token punctuation">.</span>Name<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"Eleven"</span><span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>OrdinalIgnoreCase<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ForbidAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权失败，用户{base.HttpContext.User.Identity.Name}没有权限"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权成功，用户{base.HttpContext.User.Identity.Name}具备权限"</span>
+     <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">ChallengeAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> $<span class="token string">"授权失败，没有登录"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>5.访问有授权要求的页面</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span>Authorize<span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">Info</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">//base.HttpContext.User.Identities 认证过之后就可以用了</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="app-UseAuthentication中间件"><a href="#app-UseAuthentication中间件" class="headerlink" title="app.UseAuthentication中间件"></a>app.UseAuthentication中间件</h3><p>可以看到是AuthAppBuilderExtensions这个类有个注册方法：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> IApplicationBuilder <span class="token function">UseAuthentication</span><span class="token punctuation">(</span>
+      <span class="token keyword">this</span> IApplicationBuilder app<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<ul>
+<li>AuthAppBuilderExtensions—AuthenticationMiddleware</li>
+<li>中间件一定是完成用户信息解析赋值给ContextUser</li>
+<li>期间会优先执行IAuthenticationRequestHandler—Remote,远程校验（AuthenticationHandler本地基类 和 RemoteAuthenticationHandler远程）</li>
+</ul>
+<h3 id="service-AddAuthenication-服务注册"><a href="#service-AddAuthenication-服务注册" class="headerlink" title="service.AddAuthenication 服务注册"></a>service.AddAuthenication 服务注册</h3><ul>
+<li>调用AddAuthenicationCore 其实就是通过AuthenicationHandlerProvider 指定具体的Handler</li>
+<li>注册handler，如何处理；</li>
+</ul>
+<h3 id="AddCookie"><a href="#AddCookie" class="headerlink" title="AddCookie"></a>AddCookie</h3><p>使用Cookie，在这里指定了CookieAuthenticationHandler作为处理逻辑</p>
+<p>来了个Events，就是以前的管道模型套路–</p>
+<p>又来了个SessionStore(将信息存下来，换个更简洁的ticket返回前端)(不是session，只是类似session的思路)</p>
+<p>PS: 详细的过程需要研读源码。</p>
+<p>可以看下如何做cookie的扩展，<br>SessionStore—可以MemoryCache  也可以Redis；<br>Event—类似于Asp.Net  的管道模型—可以扩展下</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token generic-method function">AddScoped<span class="token punctuation">&lt;</span>ITicketStore<span class="token punctuation">,</span> MemoryCacheTicketStore<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+services<span class="token punctuation">.</span><span class="token function">AddMemoryCache</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>DefaultAuthenticateScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//不能少 通过scheme找到handler</span>
+  options<span class="token punctuation">.</span>DefaultSignInScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span>DefaultChallengeScheme <span class="token operator">=</span> <span class="token string">"Cookie/Login"</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+  <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//信息存在服务端--把key写入cookie--类似session</span>
+    options<span class="token punctuation">.</span>SessionStore <span class="token operator">=</span> services<span class="token punctuation">.</span><span class="token function">BuildServiceProvider</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method function">GetService<span class="token punctuation">&lt;</span>ITicketStore<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    options<span class="token punctuation">.</span>Events <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CookieAuthenticationEvents</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+      OnSignedIn <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Func</span><span class="token operator">&lt;</span>CookieSignedInContext<span class="token punctuation">,</span> Task<span class="token operator">></span><span class="token punctuation">(</span>
+      <span class="token keyword">async</span> context <span class="token operator">=</span><span class="token operator">></span>
+      <span class="token punctuation">{</span>
+        Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>$<span class="token string">"{context.Request.Path} is OnSignedIn"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      OnSigningIn <span class="token operator">=</span> <span class="token keyword">async</span> context <span class="token operator">=</span><span class="token operator">></span>
+      <span class="token punctuation">{</span>
+        Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>$<span class="token string">"{context.Request.Path} is OnSigningIn"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      OnSigningOut <span class="token operator">=</span> <span class="token keyword">async</span> context <span class="token operator">=</span><span class="token operator">></span>
+      <span class="token punctuation">{</span>
+        Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span>$<span class="token string">"{context.Request.Path} is OnSigningOut"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//扩展事件</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="源码解读多授权策略"><a href="#源码解读多授权策略" class="headerlink" title="源码解读多授权策略"></a>源码解读多授权策略</h2><ul>
+<li>鉴权解析用户信息</li>
+<li>授权要求达成某个条件：</li>
+</ul>
+<ol>
+<li>Scheme</li>
+<li>Role</li>
+<li>Policy</li>
+</ol>
+<h3 id="基于Scheme形式的授权"><a href="#基于Scheme形式的授权" class="headerlink" title="基于Scheme形式的授权"></a>基于Scheme形式的授权</h3><p>先看一下如何配置：</p>
+<ul>
+<li>2个Use </li>
+<li>1个Add</li>
+<li>指定Scheme</li>
+<li>指定Controller/Action</li>
+</ul>
+<p>说到底就是：起个名字，保持统一 就可以完成授权。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>DefaultAuthenticateScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span>
+  <span class="token comment" spellcheck="true">//不能少,signin signout Authenticate都是基于Scheme</span>
+  options<span class="token punctuation">.</span>DefaultSignInScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span>CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">,</span> options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>LoginPath <span class="token operator">=</span> <span class="token string">"/Authorization/Index"</span><span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span>AccessDeniedPath <span class="token operator">=</span> <span class="token string">"/Authorization/Index"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 基于CookieAuthentication</span>
+app<span class="token punctuation">.</span><span class="token function">UseAuthentication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//鉴权</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span>
+
+app<span class="token punctuation">.</span><span class="token function">UseAuthorization</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token comment" spellcheck="true">// 需要授权的页面</span>
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>AuthenticationSchemes <span class="token operator">=</span> <span class="token string">"Cookies"</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token comment" spellcheck="true">//</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">Info</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="基于Role的形式授权"><a href="#基于Role的形式授权" class="headerlink" title="基于Role的形式授权"></a>基于Role的形式授权</h3><p>看一下具体的配置：管道和注册服务的配置和上面一样，不同的地方在于登录的时候会把角色放到identity里面：</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span>AllowAnonymous<span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">async</span> Task<span class="token operator">&lt;</span>IActionResult<span class="token operator">></span> <span class="token function">Login</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">,</span> <span class="token keyword">string</span> password<span class="token punctuation">,</span> <span class="token keyword">string</span> role <span class="token operator">=</span> <span class="token string">"Admin"</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">//base.HttpContext.RequestServices.</span>
+  <span class="token comment" spellcheck="true">//IAuthenticationService</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token string">"chaoqiang"</span><span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> StringComparison<span class="token punctuation">.</span>CurrentCultureIgnoreCase<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> password<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span><span class="token string">"123456"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> claimIdentity <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ClaimsIdentity</span><span class="token punctuation">(</span><span class="token string">"Custom"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Name<span class="token punctuation">,</span> name<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">//claimIdentity.AddClaim(new Claim(ClaimTypes.Email, "chaoqiang@qq.com"));</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Email<span class="token punctuation">,</span> <span class="token string">"57265177@qq.com"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    claimIdentity<span class="token punctuation">.</span><span class="token function">AddClaim</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Claim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">,</span> role<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">await</span> <span class="token keyword">base</span><span class="token punctuation">.</span>HttpContext<span class="token punctuation">.</span><span class="token function">SignInAsync</span><span class="token punctuation">(</span>CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">ClaimsPrincipal</span><span class="token punctuation">(</span>claimIdentity<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AuthenticationProperties</span>
+    <span class="token punctuation">{</span>
+      ExpiresUtc <span class="token operator">=</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">AddMinutes</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//登录为默认的scheme  cookies</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">true</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录成功"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">{</span>
+    <span class="token keyword">await</span> Task<span class="token punctuation">.</span>CompletedTask<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsonResult</span><span class="token punctuation">(</span><span class="token keyword">new</span>
+    <span class="token punctuation">{</span>
+      Result <span class="token operator">=</span> <span class="token keyword">false</span><span class="token punctuation">,</span>
+      Message <span class="token operator">=</span> <span class="token string">"登录失败"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>Roles <span class="token operator">=</span> <span class="token string">"Admin"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>Roles <span class="token operator">=</span> <span class="token string">"User"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>Roles <span class="token operator">=</span> <span class="token string">"Admin,User"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoAdminUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="基于Policy的授权"><a href="#基于Policy的授权" class="headerlink" title="基于Policy的授权"></a>基于Policy的授权</h3><p>管道配置与之前两种一致，不同之处在于service注入这有一个关于Authorization的注入。</p>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> 基于策略授权</span>
+services<span class="token punctuation">.</span><span class="token function">AddAuthentication</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>DefaultAuthenticateScheme <span class="token operator">=</span>CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//不能少</span>
+  options<span class="token punctuation">.</span>DefaultSignInScheme <span class="token operator">=</span> CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">AddCookie</span><span class="token punctuation">(</span>CookieAuthenticationDefaults<span class="token punctuation">.</span>AuthenticationScheme<span class="token punctuation">,</span> options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span>LoginPath <span class="token operator">=</span> <span class="token string">"/Authorization/Index"</span><span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span>AccessDeniedPath <span class="token operator">=</span> <span class="token string">"/Authorization/Index"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp">services<span class="token punctuation">.</span><span class="token function">AddAuthorization</span><span class="token punctuation">(</span>options <span class="token operator">=</span><span class="token operator">></span>
+<span class="token punctuation">{</span>
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"AdminPolicy"</span><span class="token punctuation">,</span>
+    policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder
+    <span class="token punctuation">.</span><span class="token function">RequireRole</span><span class="token punctuation">(</span><span class="token string">"Admin"</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">//Claim的Role是Admin</span>
+    <span class="token punctuation">.</span><span class="token function">RequireUserName</span><span class="token punctuation">(</span><span class="token string">"Eleven"</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">//Claim的Name是Eleven</span>
+    <span class="token punctuation">.</span><span class="token function">RequireClaim</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Email<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">//必须有某个Cliam</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//内置</span>
+
+  options<span class="token punctuation">.</span><span class="token function">AddPolicy</span><span class="token punctuation">(</span><span class="token string">"UserPolicy"</span><span class="token punctuation">,</span>
+    policyBuilder <span class="token operator">=</span><span class="token operator">></span> policyBuilder<span class="token punctuation">.</span><span class="token function">RequireAssertion</span><span class="token punctuation">(</span>context <span class="token operator">=</span><span class="token operator">></span>
+    context<span class="token punctuation">.</span>User<span class="token punctuation">.</span><span class="token function">HasClaim</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type <span class="token operator">==</span> ClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">)</span>
+    <span class="token operator">&amp;&amp;</span> context<span class="token punctuation">.</span>User<span class="token punctuation">.</span>Claims<span class="token punctuation">.</span><span class="token function">First</span><span class="token punctuation">(</span>c <span class="token operator">=</span><span class="token operator">></span> c<span class="token punctuation">.</span>Type<span class="token punctuation">.</span><span class="token function">Equals</span><span class="token punctuation">(</span>ClaimTypes<span class="token punctuation">.</span>Role<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Value <span class="token operator">==</span> <span class="token string">"Admin"</span><span class="token punctuation">)</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//自定义</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-csharp"><code class="language-csharp"><span class="token preprocessor property">#<span class="token directive keyword">region</span> Policy</span>
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>AuthenticationSchemes <span class="token operator">=</span> <span class="token string">"Cookies"</span><span class="token punctuation">,</span> Policy <span class="token operator">=</span> <span class="token string">"AdminPolicy"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoAdminPolicy</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>AuthenticationSchemes <span class="token operator">=</span> <span class="token string">"Cookies"</span><span class="token punctuation">,</span> Policy <span class="token operator">=</span> <span class="token string">"UserPolicy"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoUserPolicy</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>AuthenticationSchemes <span class="token operator">=</span> <span class="token string">"Cookies"</span><span class="token punctuation">,</span> Policy <span class="token operator">=</span> <span class="token string">"QQEmail"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoQQEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">[</span><span class="token function">Authorize</span><span class="token punctuation">(</span>AuthenticationSchemes <span class="token operator">=</span> <span class="token string">"Cookies"</span><span class="token punctuation">,</span> Policy <span class="token operator">=</span> <span class="token string">"DoubleEmail"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> IActionResult <span class="token function">InfoDoubleEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">View</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token preprocessor property">#<span class="token directive keyword">endregion</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>溯源：</p>
+<ul>
+<li>从AddMVC说起– AddAuthorization</li>
+<li>PolicyServiceCollectionExtensions</li>
+<li>AuthorizationServiceCollectionExtensions</li>
+<li>常规的注册多个对象</li>
+<li>AddAuthorizationPolicyEvaluator</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/shw2018/cdn@1.0/sakura/img/loader/orange.progress-bar-stripe-loader.svg" data-original="https://netimprovingseries-1257411902.cos.ap-shanghai.myqcloud.com/Auth/AddAuthorizationCore.png" alt=""></p>
+<p>AddAuthorization会看到Option里面就是字典存储Policy和提供名称获取</p>
+<p>AuthorizationPolicy：</p>
+<ul>
+<li>CombineAsync：把特性里面的三个属性，转成Policy,</li>
+<li>其实Scheme/Role其实都是转换成Policy</li>
+<li>发现里面有一组Requirements，是校验规则的实现</li>
+<li>生成一个Policy—PolicyBuilder+Requirements</li>
+<li>AuthorizationPolicyBuilder：建造者，组装Policy</li>
+</ul>
+<p>下面自己定义一个Requirement，使得两种邮箱都能支持：</p>
+<h2 id="JWT和Identity"><a href="#JWT和Identity" class="headerlink" title="JWT和Identity"></a>JWT和Identity</h2><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com" rel="external nofollow noreferrer">Chaoqiang</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.zhengchaoqiang.com/2020/05/23/netcore-authentication-authorization/">https://www.zhengchaoqiang.com/2020/05/23/netcore-authentication-authorization/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="https://www.zhengchaoqiang.com" target="_blank">Chaoqiang</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/Net-Core/">
+                                    <span class="chip bg-color">Net Core</span>
+                                </a>
+                            
+                                <a href="/tags/Authentication/">
+                                    <span class="chip bg-color">Authentication</span>
+                                </a>
+                            
+                                <a href="/tags/Authorization/">
+                                    <span class="chip bg-color">Authorization</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你要请我吃糖嘛!</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechatpay.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("/medias/comment_bg.png") 100% 100% no-repeat;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #4cbf30;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="vcomments" class="card-content" style="display: grid">
+    </div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'n7QWLgVufdyFqbDlUDEznVhx-gzGzoHsz',
+        appKey: 'YGPdAIijkOPzqgi0LlHI52ex',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: 'just go go'
+    });
+</script>
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2020/05/29/netcore-authentication-authorization2/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Netcore认证授权与IdentityServer4（2）JWT">
+                        
+                        <span class="card-title">Netcore认证授权与IdentityServer4（2）JWT</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            主要概要这个文章主要来聊一聊Net Core中的认证与授权，以及Net Core生态中非常火热的IdentityServer4这个组件的使用，主要内容如下：
+
+鉴权授权流程变化
+源码解读鉴权
+源码解读多授权策略
+JWT和Identity
+
+
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-29
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Net-Core-Learning-Series/" class="post-category">
+                                    .Net Core Learning Series
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Net-Core/">
+                        <span class="chip bg-color">Net Core</span>
+                    </a>
+                    
+                    <a href="/tags/JWT/">
+                        <span class="chip bg-color">JWT</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/05/02/netcore-programing-and-practice2/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="NetCore 开发实战（2）——微服务实战">
+                        
+                        <span class="card-title">NetCore 开发实战（2）——微服务实战</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            26 | 工程结构概览：定义应用分层及依赖关系从这一节开始进入微服务实战部分
+这一节主要探讨工程的结构和应用的分层
+在应用的分层这里定义了四个层次：
+
+领域模型层
+
+基础设施层
+
+应用层
+
+共享层
+
+
+可以通过代码来看一下
+共享层一共建立三
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/NetCore-开发实战/" class="post-category">
+                                    NetCore 开发实战
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Net-Core/">
+                        <span class="chip bg-color">Net Core</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: chaoqiang&#39;s Blog<br />'
+            + '文章作者: chaoqiang<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            <span>
+                <div>
+                    <span style="color:#ffffff;">Copyright&copy; 2020 chaoqiang. All Rights Reserved</span>
+                </div>
+                
+                <div style="width:500px;margin:0 auto; padding:0px 0;">
+                    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050702010849" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                        <img src="https://blog-icp-1257411902.cos.ap-shanghai.myqcloud.com/icp.png" style="float:left;"/>
+                        <span style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;">苏公网安备 32050702010849号 苏ICP备20017637号</span>
+                    </a>
+                    <!-- <span style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#ffffff;"> 苏ICP备20017637号</span> -->
+                </div>
+            </span>
+            <span id="sitetime"></span>
+        </div>
+
+    
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已勉强运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+
+
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" color="0,0,255"
+        pointColor="0,0,255" opacity='0.7'
+        zIndex="-1" count="99"
+        src="/libs/background/canvas-nest.js"></script>
+    
+
+    
+
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+     <!-- Chaoqiang shw2018 add 2019.08.28 -->
+     <script type="text/javascript">
+        var OriginTitile = document.title,
+            st;
+        document.addEventListener("visibilitychange", function () {
+            document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                    document.title = OriginTitile
+                }, 3e3))
+        })
+    </script>
+
+    <!-- 鼠标点击烟花爆炸效果  Chaoqiang shw2018 add 2019.09.09 -->
+    
+        <canvas class="fireworks" style="position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+        <script type="text/javascript" src="/js/fireworks.js"></script>
+    
+
+    <!-- 背景雪花飘落特效Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 鼠标点击文字特效 Chaoqiang shw2018 add 2019.09.10-->
+    
+        <script src="/js/wenzi.js" type="text/javascript"></script>
+    
+
+    <!-- 背景雪花飘落特效 Chaoqiang shw2018 add 2019.09.10 -->
+    
+
+    <!-- 在线聊天工具  Chaoqiang shw2018 add 2019.09.11 -->
+    
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":200},"mobile":{"show":false},"react":{"opacity":0.7}});</script><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>
